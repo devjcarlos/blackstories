@@ -167,3 +167,50 @@ html.vt-prev::view-transition-new(root) { animation: 300ms ease-out vt-left-in; 
    FOCUS
    ════════════════════════════════════════════════════════════════ */
 :focus-visible { outline: 2px solid var(--blood); outline-offset: 3px; border-radius: 3px; }
+
+/* ════════════════════════════════════════════════════════════════
+   LAYOUT — clases globales usadas en múltiples páginas
+   ════════════════════════════════════════════════════════════════ */
+
+/* Ancho máximo centrado */
+.container {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+/* Eyebrow label rojo — usado en index, jugar, como-jugar */
+.eyebrow {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: .75rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--blood);
+}
+
+/* Botones globales */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: .875rem;
+  text-decoration: none;
+  transition: opacity .15s, scale .15s;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+.btn:hover  { opacity: .85; }
+.btn:active { scale: .97; }
+.btn--dark    { background: var(--ink);  color: var(--cream); }
+.btn--outline {
+  background: transparent;
+  color: var(--ink-2);
+  border: 1.5px solid var(--cream-border);
+}
+.btn--outline:hover { border-color: var(--ink-2); }
