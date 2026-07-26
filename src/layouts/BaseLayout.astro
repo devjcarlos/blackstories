@@ -5,13 +5,11 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
-  ogImage?: string;
 }
 
 const {
   title = 'Historias Negras — El juego de sí o no',
-  description = 'Acertijos de situación para grupos. Uno conoce la solución, los demás deben descubrirla solo preguntando sí o no.',
-  ogImage = '/og-default.png',
+  description = 'Acertijos de situación para grupos. Uno conoce la solución, los demás la descubren preguntando solo sí o no.',
 } = Astro.props;
 ---
 
@@ -21,77 +19,136 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f4efe6" />
+    <meta name="theme-color" content="#f3ede3" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
     <title>{title}</title>
     <ClientRouter />
   </head>
   <body>
 
-    <!-- ─── Navbar ─────────────────────────────────────────────── -->
-    <header
-      class="fixed top-0 left-0 right-0 z-50 border-b"
-      style="background: rgba(244,239,230,0.88); backdrop-filter: blur(14px); border-color: var(--color-base-border);"
-    >
-      <nav class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-
-        <!-- Logo -->
-        <a href="/" class="flex items-center gap-2.5 group" transition:name="nav-logo">
-          <!-- Pequeño cuadrado de acento -->
-          <span
-            class="w-5 h-5 rounded-sm flex-shrink-0 transition-transform group-hover:rotate-12 duration-300"
-            style="background: var(--color-blood);"
-          ></span>
-          <span
-            class="font-display font-700 text-lg tracking-tight leading-none"
-            style="color: var(--color-ink);"
-          >
-            Historias Negras
-          </span>
+    <header class="site-header">
+      <nav class="container nav-inner">
+        <a href="/" class="nav-logo">
+          <span class="nav-logo__dot"></span>
+          <span class="nav-logo__text">Historias Negras</span>
         </a>
-
-        <!-- Nav links -->
-        <div class="flex items-center gap-1">
-          <a
-            href="/jugar"
-            class="px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
-            style="color: var(--color-muted);"
-            onmouseover="this.style.color='var(--color-ink)'; this.style.background='var(--color-base-soft)'"
-            onmouseout="this.style.color='var(--color-muted)'; this.style.background='transparent'"
-          >
-            Jugar
-          </a>
-          <a
-            href="/como-jugar"
-            class="px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
-            style="color: var(--color-muted);"
-            onmouseover="this.style.color='var(--color-ink)'; this.style.background='var(--color-base-soft)'"
-            onmouseout="this.style.color='var(--color-muted)'; this.style.background='transparent'"
-          >
-            Cómo jugar
-          </a>
+        <div class="nav-links">
+          <a href="/jugar" class="nav-link">Jugar</a>
+          <a href="/como-jugar" class="nav-link">Cómo jugar</a>
         </div>
       </nav>
     </header>
 
-    <!-- ─── Main ────────────────────────────────────────────────── -->
-    <main class="pt-14">
+    <main>
       <slot />
     </main>
 
-    <!-- ─── Footer ─────────────────────────────────────────────── -->
-    <footer
-      class="border-t mt-24 py-10 text-center text-sm"
-      style="border-color: var(--color-base-border); color: var(--color-muted);"
-    >
-      <p style="font-family: var(--font-display);">Historias Negras &mdash; Un juego para noches largas</p>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span class="footer-logo">Historias Negras</span>
+        <span class="footer-copy">Un juego para noches largas</span>
+      </div>
     </footer>
 
   </body>
 </html>
+
+<style>
+  /* ── Navbar ─────────────────────────────────────────────────── */
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--cream) 90%, transparent);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--cream-border);
+  }
+
+  .nav-inner {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .nav-logo__dot {
+    width: 18px; height: 18px;
+    background: var(--blood);
+    border-radius: 3px;
+    flex-shrink: 0;
+    transition: rotate .3s ease;
+  }
+  .nav-logo:hover .nav-logo__dot { rotate: 12deg; }
+
+  .nav-logo__text {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--ink);
+    letter-spacing: -.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-link {
+    font-family: var(--f-sans);
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: color .15s, background .15s;
+  }
+  .nav-link:hover {
+    color: var(--ink);
+    background: var(--cream-2);
+  }
+
+  /* ── Layout ─────────────────────────────────────────────────── */
+  main { padding-top: 56px; }
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Footer ─────────────────────────────────────────────────── */
+  .site-footer {
+    margin-top: 96px;
+    border-top: 1px solid var(--cream-border);
+    padding: 32px 0;
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: .875rem;
+    color: var(--ink-2);
+  }
+
+  .footer-copy {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: .875rem;
+    color: var(--muted);
+  }
+</style>

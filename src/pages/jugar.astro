@@ -3,10 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AcertijoCard from '../components/AcertijoCard.astro';
 import { getCollection } from 'astro:content';
 
-const acertijos = await getCollection('acertijos');
-const ordenados = acertijos.sort((a, b) => a.data.dificultad - b.data.dificultad);
+const all      = await getCollection('acertijos');
+const ordenados = all.sort((a, b) => a.data.dificultad - b.data.dificultad);
+const random   = all[Math.floor(Math.random() * all.length)]?.id;
 
-const categorias = [
+const cats = [
   { id: 'todos',     label: 'Todos' },
   { id: 'oscuro',    label: 'Oscuro' },
   { id: 'surreal',   label: 'Surreal' },
@@ -15,44 +16,20 @@ const categorias = [
   { id: 'historico', label: 'Histórico' },
   { id: 'cortito',   label: 'Cortito' },
 ];
-
-const randomSlug = acertijos[Math.floor(Math.random() * acertijos.length)]?.id;
 ---
 
-<BaseLayout
-  title="Jugar — Historias Negras"
-  description="Explora todos los acertijos y elige el tuyo."
->
-  <div class="max-w-6xl mx-auto px-5 py-14">
+<BaseLayout title="Jugar — Historias Negras">
+  <div class="page container">
 
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+    <!-- Cabecera -->
+    <header class="page-head">
       <div>
-        <p
-          class="font-display text-xs font-600 tracking-[0.18em] uppercase mb-2"
-          style="color: var(--color-blood);"
-        >
-          {acertijos.length} historias
-        </p>
-        <h1
-          class="font-display font-800 text-5xl"
-          style="color: var(--color-ink);"
-        >
-          Acertijos
-        </h1>
+        <p class="eyebrow">{all.length} historias disponibles</p>
+        <h1 class="page-title">Acertijos</h1>
       </div>
-
-      <!-- Botón aleatorio -->
-      {randomSlug && (
-        <a
-          href={`/acertijos/${randomSlug}`}
-          id="btn-random"
-          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-display font-500 text-sm border transition-all group"
-          style="border-color: var(--color-base-border); color: var(--color-muted);"
-          onmouseover="this.style.borderColor='var(--color-ink)'; this.style.color='var(--color-ink)'"
-          onmouseout="this.style.borderColor='var(--color-base-border)'; this.style.color='var(--color-muted)'"
-        >
-          <svg class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" style="color: var(--color-blood);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      {random && (
+        <a href={`/acertijos/${random}`} id="btn-random" class="btn-random">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <polyline points="16 3 21 3 21 8"/>
             <line x1="4" y1="20" x2="21" y2="3"/>
             <polyline points="21 16 21 21 16 21"/>
@@ -61,94 +38,178 @@ const randomSlug = acertijos[Math.floor(Math.random() * acertijos.length)]?.id;
           Aleatorio
         </a>
       )}
-    </div>
+    </header>
 
     <!-- Filtros -->
-    <div class="flex flex-wrap gap-2 mb-10" role="group" aria-label="Filtrar por categoría">
-      {categorias.map(cat => (
+    <div class="filters" role="group" aria-label="Filtrar por categoría">
+      {cats.map(c => (
         <button
-          class="filtro-btn font-display font-500 text-sm px-4 py-1.5 rounded-full border transition-all"
-          data-cat={cat.id}
-          aria-pressed={cat.id === 'todos' ? 'true' : 'false'}
-          style="border-color: var(--color-base-border); color: var(--color-muted);"
+          class="filter-pill"
+          data-cat={c.id}
+          aria-pressed={c.id === 'todos' ? 'true' : 'false'}
         >
-          {cat.label}
+          {c.label}
         </button>
       ))}
     </div>
 
     <!-- Grid -->
-    <div id="acertijos-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {ordenados.map((acertijo, i) => (
-        <div data-categoria={acertijo.data.categoria} class="acertijo-item">
-          <AcertijoCard acertijo={acertijo} index={i} />
+    <div id="grid" class="grid">
+      {ordenados.map((a, i) => (
+        <div class="grid-item" data-categoria={a.data.categoria}>
+          <AcertijoCard acertijo={a} index={i} />
         </div>
       ))}
     </div>
 
     <!-- Empty state -->
-    <div id="empty-state" class="hidden text-center py-24">
-      <p
-        class="font-serif text-2xl italic"
-        style="color: var(--color-muted);"
-      >
-        Ningún acertijo en esta categoría… por ahora.
-      </p>
-    </div>
+    <p id="empty" class="empty hidden">
+      Ningún acertijo en esta categoría… por ahora.
+    </p>
+
   </div>
 </BaseLayout>
 
 <style>
-  .filtro-btn[aria-pressed="true"] {
-    border-color: var(--color-ink) !important;
-    color: var(--color-base) !important;
-    background: var(--color-ink);
+  .page { padding-top: 56px; padding-bottom: 80px; }
+
+  /* Cabecera */
+  .page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 36px;
   }
-  .filtro-btn:hover:not([aria-pressed="true"]) {
-    border-color: var(--color-ink-soft);
-    color: var(--color-ink-soft);
-    background: var(--color-base-soft);
+
+  .eyebrow {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .75rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--blood);
+    margin-bottom: 6px;
   }
+
+  .page-title {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: var(--ink);
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+
+  /* Botón aleatorio */
+  .btn-random {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 99px;
+    border: 1.5px solid var(--cream-border);
+    background: transparent;
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .8125rem;
+    color: var(--ink-2);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .btn-random:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+    background: var(--cream-2);
+  }
+  .btn-random svg { color: var(--blood); transition: rotate .4s; }
+  .btn-random:hover svg { rotate: 180deg; }
+
+  /* Filtros */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .filter-pill {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .8125rem;
+    padding: 7px 16px;
+    border-radius: 99px;
+    border: 1.5px solid var(--cream-border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .filter-pill:hover {
+    border-color: var(--ink-2);
+    color: var(--ink-2);
+    background: var(--cream-2);
+  }
+  .filter-pill[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--cream);
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+  .grid-item { display: flex; flex-direction: column; }
+
+  /* Empty */
+  .empty {
+    text-align: center;
+    padding: 80px 0;
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--muted);
+  }
+  .hidden { display: none; }
 </style>
 
 <script>
-  function initFiltros() {
-    const botones = document.querySelectorAll<HTMLButtonElement>('.filtro-btn');
-    const items   = document.querySelectorAll<HTMLElement>('.acertijo-item');
-    const empty   = document.getElementById('empty-state');
-    const btnRandom = document.getElementById('btn-random') as HTMLAnchorElement | null;
+  function init() {
+    const pills   = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+    const items   = document.querySelectorAll<HTMLElement>('.grid-item');
+    const empty   = document.getElementById('empty');
+    const btnRnd  = document.getElementById('btn-random') as HTMLAnchorElement | null;
 
-    function filtrar(categoria: string) {
-      let visibles = 0;
-      items.forEach(item => {
-        const visible = categoria === 'todos' || item.dataset.categoria === categoria;
-        item.style.display = visible ? '' : 'none';
-        if (visible) visibles++;
-      });
-      if (empty) empty.classList.toggle('hidden', visibles > 0);
-
-      if (btnRandom) {
-        const slugsVisibles = Array.from(items)
-          .filter(el => el.style.display !== 'none')
-          .map(el => el.querySelector('a')?.getAttribute('href') ?? '')
-          .filter(Boolean);
-        if (slugsVisibles.length > 0) {
-          btnRandom.href = slugsVisibles[Math.floor(Math.random() * slugsVisibles.length)];
+    function filter(cat: string) {
+      let n = 0;
+      const visible: string[] = [];
+      items.forEach(el => {
+        const show = cat === 'todos' || el.dataset.categoria === cat;
+        el.style.display = show ? '' : 'none';
+        if (show) {
+          n++;
+          const href = el.querySelector('a')?.getAttribute('href');
+          if (href) visible.push(href);
         }
-      }
+      });
+      if (empty) empty.classList.toggle('hidden', n > 0);
+      if (btnRnd && visible.length)
+        btnRnd.href = visible[Math.floor(Math.random() * visible.length)];
     }
 
-    botones.forEach(btn => {
-      btn.addEventListener('click', () => {
-        botones.forEach(b => {
-          b.setAttribute('aria-pressed', 'false');
-          (b as HTMLElement).style.removeProperty('background');
-        });
-        btn.setAttribute('aria-pressed', 'true');
-        filtrar(btn.dataset.cat ?? 'todos');
-      });
-    });
+    pills.forEach(p => p.addEventListener('click', () => {
+      pills.forEach(x => x.setAttribute('aria-pressed', 'false'));
+      p.setAttribute('aria-pressed', 'true');
+      filter(p.dataset.cat ?? 'todos');
+    }));
   }
 
-  document.addEventListener('astro:page-load', initFiltros);
+  document.addEventListener('astro:page-load', init);
 </script>

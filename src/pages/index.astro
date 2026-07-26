@@ -3,196 +3,310 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AcertijoCard from '../components/AcertijoCard.astro';
 import { getCollection } from 'astro:content';
 
-const acertijos = await getCollection('acertijos');
-const destacados = acertijos.filter(a => a.data.destacado).slice(0, 3);
+const all        = await getCollection('acertijos');
+const destacados = all.filter(a => a.data.destacado).slice(0, 3);
 ---
 
 <BaseLayout>
 
-  <!-- ─── Hero editorial ───────────────────────────────────────── -->
-  <section class="max-w-6xl mx-auto px-5 pt-16 pb-20">
-    <div class="grid lg:grid-cols-[1fr_auto] gap-12 items-end">
+  <!-- ══════════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════════ -->
+  <section class="hero container">
 
-      <!-- Texto izquierda -->
-      <div>
-        <!-- Eyebrow -->
-        <p
-          class="animate-fade-up font-display text-xs font-600 tracking-[0.18em] uppercase mb-5"
-          style="color: var(--color-blood);"
-        >
-          El juego de fiesta de sí o no
-        </p>
+    <!-- Columna texto -->
+    <div class="hero__text">
+      <p class="eyebrow anim">El juego de fiesta · Sí o No</p>
 
-        <!-- Título: tipografía display grande, contraste fuerte -->
-        <h1
-          class="animate-fade-up stagger-1 font-display leading-[0.9] tracking-tight mb-8"
-          style="font-size: clamp(4rem, 10vw, 9rem); font-weight: 800; color: var(--color-ink);"
-        >
-          Historias<br/>
-          <span style="color: var(--color-blood);">Negras</span>
-        </h1>
+      <h1 class="hero__title anim d1">
+        Historias<br/>
+        <em class="hero__title--red">Negras</em>
+      </h1>
 
-        <!-- Subtítulo -->
-        <p
-          class="animate-fade-up stagger-2 font-serif text-xl max-w-lg leading-relaxed mb-10"
-          style="color: var(--color-muted); font-size: 1.25rem;"
-        >
-          Un enigma. Preguntas de sí o no.<br/>
-          <em>Y una historia que nadie esperaba.</em>
-        </p>
+      <p class="hero__sub anim d2">
+        Un enigma. Preguntas de sí&nbsp;o&nbsp;no.<br/>
+        <em>Y una historia que nadie esperaba.</em>
+      </p>
 
-        <!-- CTAs -->
-        <div class="animate-fade-up stagger-3 flex flex-wrap items-center gap-3">
-          <a
-            href="/jugar"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-display font-600 text-sm tracking-wide transition-all duration-200 hover:scale-105 active:scale-95"
-            style="background: var(--color-ink); color: var(--color-base);"
-            onmouseover="this.style.background='var(--color-blood)'"
-            onmouseout="this.style.background='var(--color-ink)'"
-          >
-            Empezar a jugar
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </a>
-          <a
-            href="/como-jugar"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-display font-500 text-sm border transition-all duration-200"
-            style="border-color: var(--color-base-border); color: var(--color-muted);"
-            onmouseover="this.style.borderColor='var(--color-ink)'; this.style.color='var(--color-ink)'"
-            onmouseout="this.style.borderColor='var(--color-base-border)'; this.style.color='var(--color-muted)'"
-          >
-            Cómo funciona
-          </a>
-        </div>
-      </div>
-
-      <!-- Decoración derecha: cuadrícula de colores de categoría -->
-      <div class="animate-fade-up stagger-2 hidden lg:grid grid-cols-2 gap-3 w-52">
-        {[
-          { label: 'Oscuro',    color: '#100c0c', text: '#c0392b' },
-          { label: 'Surreal',   color: '#f2ecfa', text: '#7c3aed' },
-          { label: 'Humor',     color: '#fef9ec', text: '#d97706' },
-          { label: 'Clásico',   color: '#eef2f8', text: '#1d4ed8' },
-          { label: 'Histórico', color: '#faf4ec', text: '#92400e' },
-          { label: 'Cortito',   color: '#eef8f2', text: '#15803d' },
-        ].map((cat, i) => (
-          <div
-            class={`rounded-xl p-4 flex flex-col justify-end stagger-${i + 1} animate-fade-up`}
-            style={`background: ${cat.color}; aspect-ratio: 1; border: 1.5px solid ${cat.text}22;`}
-          >
-            <span
-              class="font-display text-xs font-700 uppercase tracking-wide"
-              style={`color: ${cat.text};`}
-            >
-              {cat.label}
-            </span>
-          </div>
-        ))}
+      <div class="hero__ctas anim d3">
+        <a href="/jugar" class="btn btn--dark">
+          Empezar a jugar
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+        <a href="/como-jugar" class="btn btn--outline">Cómo funciona</a>
       </div>
     </div>
+
+    <!-- Columna imagen -->
+    <div class="hero__img-wrap anim d2">
+      <img
+        src="/images/hero.svg"
+        alt="Grupo jugando Historias Negras a la luz de una vela"
+        class="hero__img"
+        width="720"
+        height="900"
+      />
+      <!-- Pill flotante sobre la imagen -->
+      <div class="hero__pill">
+        <span class="hero__pill-dot"></span>
+        Más de 3 acertijos
+      </div>
+    </div>
+
   </section>
 
-  <!-- ─── Separador ─────────────────────────────────────────────── -->
-  <div
-    class="border-t max-w-6xl mx-auto px-5"
-    style="border-color: var(--color-base-border);"
-  />
+  <!-- ══════════════════════════════════════════════════════════
+       CÓMO FUNCIONA
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section container">
+    <div class="divider"></div>
 
-  <!-- ─── Cómo funciona ─────────────────────────────────────────── -->
-  <section class="max-w-6xl mx-auto px-5 py-20">
-    <p
-      class="font-display text-xs font-600 tracking-[0.18em] uppercase mb-8"
-      style="color: var(--color-blood);"
-    >
-      Las reglas
-    </p>
-    <div class="grid sm:grid-cols-3 gap-10">
+    <div class="section__head">
+      <p class="eyebrow">Las reglas</p>
+      <h2 class="section__title">Tres pasos, miles de historias</h2>
+    </div>
+
+    <div class="steps">
       {[
-        {
-          num: '01',
-          titulo: 'El Game Master lee el enigma',
-          texto: 'Solo él conoce la solución. El resto del grupo escucha el enunciado misterioso.',
-        },
-        {
-          num: '02',
-          titulo: 'El grupo hace preguntas',
-          texto: 'Las únicas respuestas posibles son "sí", "no" o "no es relevante". Sin más pistas.',
-        },
-        {
-          num: '03',
-          titulo: 'Se revela la verdad',
-          texto: 'Cuando alguien adivina, el Game Master pulsa revelar y la historia completa aparece.',
-        },
-      ].map((paso, i) => (
-        <div class={`animate-fade-up stagger-${i + 1} flex flex-col gap-4`}>
-          <span
-            class="font-display text-6xl font-800 leading-none"
-            style="color: var(--color-base-border);"
-          >
-            {paso.num}
-          </span>
-          <h3
-            class="font-display font-700 text-lg leading-snug"
-            style="color: var(--color-ink);"
-          >
-            {paso.titulo}
-          </h3>
-          <p
-            class="text-sm leading-relaxed"
-            style="color: var(--color-muted);"
-          >
-            {paso.texto}
-          </p>
+        { n:'01', title:'El Game Master lee el enigma',   body:'Solo él conoce la verdad. El resto del grupo escucha el misterioso enunciado.' },
+        { n:'02', title:'El grupo pregunta',              body:'Las únicas respuestas posibles son "sí", "no" o "no es relevante".' },
+        { n:'03', title:'Se revela la historia',          body:'Cuando alguien lo adivina, el Game Master descubre la solución completa.' },
+      ].map((s, i) => (
+        <div class={`step anim d${i+1}`}>
+          <span class="step__num">{s.n}</span>
+          <h3 class="step__title">{s.title}</h3>
+          <p class="step__body">{s.body}</p>
         </div>
       ))}
     </div>
   </section>
 
-  <!-- ─── Separador ─────────────────────────────────────────────── -->
-  <div
-    class="border-t max-w-6xl mx-auto px-5"
-    style="border-color: var(--color-base-border);"
-  />
-
-  <!-- ─── Acertijos destacados ──────────────────────────────────── -->
+  <!-- ══════════════════════════════════════════════════════════
+       DESTACADOS
+  ══════════════════════════════════════════════════════════ -->
   {destacados.length > 0 && (
-    <section class="max-w-6xl mx-auto px-5 py-20">
-      <div class="flex items-end justify-between mb-10">
+    <section class="section container">
+      <div class="divider"></div>
+
+      <div class="section__head">
         <div>
-          <p
-            class="font-display text-xs font-600 tracking-[0.18em] uppercase mb-2"
-            style="color: var(--color-blood);"
-          >
-            Para empezar
-          </p>
-          <h2
-            class="font-display font-800 text-4xl"
-            style="color: var(--color-ink);"
-          >
-            Destacados
-          </h2>
+          <p class="eyebrow">Para empezar</p>
+          <h2 class="section__title">Acertijos destacados</h2>
         </div>
-        <a
-          href="/jugar"
-          class="font-display text-sm font-500 flex items-center gap-1 transition-colors group"
-          style="color: var(--color-muted);"
-          onmouseover="this.style.color='var(--color-ink)'"
-          onmouseout="this.style.color='var(--color-muted)'"
-        >
+        <a href="/jugar" class="link-arrow">
           Ver todos
-          <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>
         </a>
       </div>
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {destacados.map((acertijo, i) => (
-          <AcertijoCard acertijo={acertijo} index={i} />
-        ))}
+      <div class="card-grid">
+        {destacados.map((a, i) => <AcertijoCard acertijo={a} index={i} />)}
       </div>
     </section>
   )}
 
 </BaseLayout>
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    padding-top: 72px;
+    padding-bottom: 80px;
+  }
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; gap: 40px; padding-top: 48px; }
+    .hero__img-wrap { order: -1; }
+  }
+
+  .hero__text { display: flex; flex-direction: column; gap: 24px; }
+
+  .hero__title {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(4rem, 9vw, 8rem);
+    line-height: .9;
+    letter-spacing: -.03em;
+    color: var(--ink);
+    font-style: normal;
+  }
+  .hero__title--red { color: var(--blood); font-style: normal; }
+
+  .hero__sub {
+    font-family: var(--f-serif);
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  /* Imagen hero */
+  .hero__img-wrap {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+  }
+  .hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Pill flotante */
+  .hero__pill {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: color-mix(in srgb, var(--cream) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--cream-border);
+    border-radius: 99px;
+    padding: 8px 16px;
+    font-family: var(--f-sans);
+    font-size: .8125rem;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .hero__pill-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--blood);
+    animation: blink-red 2s ease-in-out infinite;
+  }
+
+  /* ── Botones ──────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 99px;
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .875rem;
+    letter-spacing: .01em;
+    text-decoration: none;
+    transition: opacity .15s, scale .15s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn:hover  { opacity: .85; }
+  .btn:active { scale: .97; }
+
+  .btn--dark    { background: var(--ink);  color: var(--cream); }
+  .btn--outline {
+    background: transparent;
+    color: var(--ink-2);
+    border: 1.5px solid var(--cream-border);
+  }
+  .btn--outline:hover { border-color: var(--ink-2); }
+
+  /* ── Secciones ────────────────────────────────────────────── */
+  .section { padding-bottom: 80px; }
+
+  .divider {
+    height: 1px;
+    background: var(--cream-border);
+    margin-bottom: 60px;
+  }
+
+  .section__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .eyebrow {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .75rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--blood);
+    margin-bottom: 8px;
+  }
+
+  .section__title {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    color: var(--ink);
+    letter-spacing: -.02em;
+    line-height: 1.1;
+  }
+
+  /* ── Steps ────────────────────────────────────────────────── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  @media (max-width: 640px) {
+    .steps { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  .step { display: flex; flex-direction: column; gap: 12px; }
+
+  .step__num {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--cream-border);
+  }
+
+  .step__title {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .step__body {
+    font-size: .9rem;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  /* ── Card grid ────────────────────────────────────────────── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 900px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .card-grid { grid-template-columns: 1fr; } }
+
+  /* ── Link con flecha ──────────────────────────────────────── */
+  .link-arrow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--f-sans);
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color .15s;
+  }
+  .link-arrow:hover { color: var(--ink); }
+  .link-arrow svg { transition: translate .15s; }
+  .link-arrow:hover svg { translate: 3px 0; }
+</style>

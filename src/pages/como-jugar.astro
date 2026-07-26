@@ -4,71 +4,180 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="Cómo jugar — Historias Negras"
-  description="Aprende las reglas del juego de acertijos de situación."
+  description="Aprende las reglas del juego de acertijos de sí o no."
 >
-  <div class="max-w-2xl mx-auto px-4 py-16">
+  <div class="page container">
 
-    <div class="mb-12 text-center">
-      <h1 class="font-serif text-5xl text-zinc-100 mb-4">Cómo jugar</h1>
-      <p class="text-zinc-500 font-serif italic text-xl">Las reglas son simples. Las historias, no tanto.</p>
-    </div>
+    <header class="page-head">
+      <p class="eyebrow">Las reglas</p>
+      <h1 class="page-title">Cómo jugar</h1>
+      <p class="page-sub">
+        Las reglas son simples. Las historias, no tanto.
+      </p>
+    </header>
 
-    <div class="space-y-8">
+    <div class="rules">
 
-      <div class="card-glass rounded-xl p-6 border-l-2 border-blood">
-        <h2 class="font-serif text-2xl text-zinc-100 mb-3">El Game Master</h2>
-        <p class="text-zinc-400 leading-relaxed">
-          Uno del grupo ejerce de <strong class="text-zinc-200">Game Master</strong>. Él es el único que conoce
-          la solución al enigma. Lee el enunciado en voz alta y responde las preguntas del grupo.
-        </p>
-      </div>
-
-      <div class="card-glass rounded-xl p-6">
-        <h2 class="font-serif text-2xl text-zinc-100 mb-3">Las preguntas</h2>
-        <p class="text-zinc-400 leading-relaxed mb-4">
-          El resto del grupo hace preguntas al Game Master. Solo puede responder con:
-        </p>
-        <div class="grid grid-cols-3 gap-3">
-          {[
-            { resp: 'Sí', color: 'text-emerald-400 border-emerald-900/50 bg-emerald-950/20' },
-            { resp: 'No', color: 'text-red-400 border-red-900/50 bg-red-950/20' },
-            { resp: 'No es relevante', color: 'text-zinc-400 border-zinc-700/50 bg-zinc-900/30' },
-          ].map(({ resp, color }) => (
-            <div class={`rounded-lg border p-3 text-center font-semibold text-sm ${color}`}>
-              {resp}
-            </div>
-          ))}
+      {[
+        {
+          n: '01',
+          title: 'El Game Master',
+          body: 'Uno del grupo ejerce de Game Master. Solo él conoce la solución al enigma. Lee el enunciado en voz alta al resto del grupo.',
+        },
+        {
+          n: '02',
+          title: 'Las preguntas',
+          body: 'El grupo hace preguntas que el Game Master solo puede responder con "sí", "no" o "no es relevante". Sin más pistas.',
+          extra: ['Sí', 'No', 'No es relevante'],
+        },
+        {
+          n: '03',
+          title: 'El cronómetro',
+          body: 'Cada acertijo tiene un tiempo estimado. El cronómetro se vuelve rojo si lo superáis. No es obligatorio, pero añade tensión.',
+        },
+        {
+          n: '04',
+          title: 'La victoria',
+          body: 'Cuando alguien adivina la historia (o algo suficientemente aproximado), el Game Master pulsa revelar y la solución completa aparece.',
+        },
+      ].map((r, i) => (
+        <div class={`rule anim d${Math.min(i+1,5)}`}>
+          <span class="rule__num">{r.n}</span>
+          <div class="rule__content">
+            <h2 class="rule__title">{r.title}</h2>
+            <p class="rule__body">{r.body}</p>
+            {r.extra && (
+              <div class="rule__chips">
+                {r.extra.map(chip => <span class="chip">{chip}</span>)}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-
-      <div class="card-glass rounded-xl p-6">
-        <h2 class="font-serif text-2xl text-zinc-100 mb-3">La victoria</h2>
-        <p class="text-zinc-400 leading-relaxed">
-          Cuando alguien dice la historia correcta (o lo suficientemente aproximada), el Game Master
-          pulsa el botón de revelar y la historia completa aparece para todos. Sin trampa, sin cartón.
-        </p>
-      </div>
-
-      <div class="card-glass rounded-xl p-6">
-        <h2 class="font-serif text-2xl text-zinc-100 mb-3">El cronómetro</h2>
-        <p class="text-zinc-400 leading-relaxed">
-          Cada acertijo tiene un tiempo estimado. El cronómetro se vuelve rojo si lo superáis.
-          No es obligatorio, pero añade presión.
-        </p>
-      </div>
+      ))}
 
     </div>
 
-    <div class="mt-12 text-center">
-      <a
-        href="/jugar"
-        class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-blood hover:bg-red-500 text-white font-medium text-sm tracking-wide transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95"
-      >
+    <div class="cta-wrap">
+      <a href="/jugar" class="cta-btn">
         Empezar a jugar
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
       </a>
     </div>
+
   </div>
 </BaseLayout>
+
+<style>
+  .page { padding-top: 56px; padding-bottom: 80px; max-width: 720px; }
+
+  .page-head { margin-bottom: 60px; }
+
+  .eyebrow {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .75rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--blood);
+    margin-bottom: 10px;
+  }
+
+  .page-title {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: var(--ink);
+    letter-spacing: -.03em;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .page-sub {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--muted);
+  }
+
+  /* Reglas */
+  .rules {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .rule {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--cream-border);
+  }
+  .rule:first-child { border-top: 1px solid var(--cream-border); }
+
+  .rule__num {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--cream-border);
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .rule__content { display: flex; flex-direction: column; gap: 10px; }
+
+  .rule__title {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--ink);
+    letter-spacing: -.01em;
+  }
+
+  .rule__body {
+    font-size: .9375rem;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  .rule__chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .chip {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .8125rem;
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1.5px solid var(--cream-border);
+    color: var(--ink-2);
+  }
+
+  /* CTA */
+  .cta-wrap {
+    margin-top: 56px;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 99px;
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .9375rem;
+    text-decoration: none;
+    transition: opacity .15s, scale .15s;
+  }
+  .cta-btn:hover  { opacity: .85; }
+  .cta-btn:active { scale: .97; }
+</style>

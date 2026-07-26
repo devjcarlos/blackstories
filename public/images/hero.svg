@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900" fill="none">
+  <rect width="720" height="900" fill="#1a1008"/>
+
+  <!-- Gradiente ambiente -->
+  <radialGradient id="amb" cx="50%" cy="55%" r="60%">
+    <stop offset="0%" stop-color="#3a1f0a" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#0e0804" stop-opacity="1"/>
+  </radialGradient>
+  <rect width="720" height="900" fill="url(#amb)"/>
+
+  <!-- Mesa de madera (perspectiva) -->
+  <path d="M80 680 L640 680 L720 780 L0 780 Z" fill="#2a1a08" opacity=".9"/>
+  <path d="M80 680 L640 680 L640 690 L80 690 Z" fill="#3d2510" opacity=".8"/>
+  <!-- Veta de la madera -->
+  <line x1="100" y1="680" x2="80"  y2="760" stroke="#1a0e04" stroke-width="1" opacity=".4"/>
+  <line x1="260" y1="680" x2="240" y2="760" stroke="#1a0e04" stroke-width="1" opacity=".3"/>
+  <line x1="420" y1="680" x2="400" y2="760" stroke="#1a0e04" stroke-width="1" opacity=".3"/>
+  <line x1="580" y1="680" x2="560" y2="760" stroke="#1a0e04" stroke-width="1" opacity=".4"/>
+
+  <!-- Vela central -->
+  <!-- Cera -->
+  <rect x="338" y="600" width="44" height="80" rx="4" fill="#f5e8c8" opacity=".9"/>
+  <rect x="338" y="600" width="44" height="8" rx="4" fill="#e8d4a0" opacity=".7"/>
+  <!-- Mecha -->
+  <line x1="360" y1="600" x2="360" y2="588" stroke="#2a1a08" stroke-width="2" stroke-linecap="round"/>
+  <!-- Llama -->
+  <ellipse cx="360" cy="576" rx="10" ry="16" fill="#c0392b" opacity=".9"/>
+  <ellipse cx="360" cy="572" rx="7"  ry="12" fill="#e67e22" opacity=".95"/>
+  <ellipse cx="360" cy="569" rx="4"  ry="8"  fill="#f5e642" opacity="1"/>
+  <!-- Halo de luz de la vela -->
+  <radialGradient id="candleGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%"   stop-color="#c0392b" stop-opacity=".18"/>
+    <stop offset="100%" stop-color="#c0392b" stop-opacity="0"/>
+  </radialGradient>
+  <ellipse cx="360" cy="580" rx="180" ry="140" fill="url(#candleGlow)"/>
+
+  <!-- Sombras de personajes sentados (siluetas) -->
+  <!-- Persona izquierda -->
+  <g opacity=".85">
+    <ellipse cx="170" cy="640" rx="38" ry="14" fill="#0e0804"/>
+    <rect x="140" y="500" width="60" height="145" rx="12" fill="#160e06"/>
+    <ellipse cx="170" cy="494" rx="28" ry="30" fill="#160e06"/>
+  </g>
+  <!-- Persona derecha -->
+  <g opacity=".85">
+    <ellipse cx="550" cy="640" rx="38" ry="14" fill="#0e0804"/>
+    <rect x="520" y="500" width="60" height="145" rx="12" fill="#160e06"/>
+    <ellipse cx="550" cy="494" rx="28" ry="30" fill="#160e06"/>
+  </g>
+  <!-- Persona fondo izquierda (más pequeña) -->
+  <g opacity=".5">
+    <rect x="255" y="560" width="44" height="120" rx="10" fill="#0e0804"/>
+    <ellipse cx="277" cy="554" rx="21" ry="23" fill="#0e0804"/>
+  </g>
+  <!-- Persona fondo derecha -->
+  <g opacity=".5">
+    <rect x="420" y="560" width="44" height="120" rx="10" fill="#0e0804"/>
+    <ellipse cx="442" cy="554" rx="21" ry="23" fill="#0e0804"/>
+  </g>
+
+  <!-- Carta/tarjeta boca abajo sobre la mesa -->
+  <rect x="288" y="648" width="144" height="24" rx="4" fill="#f3ede3" opacity=".15"/>
+  <rect x="288" y="648" width="144" height="24" rx="4" stroke="#f3ede3" stroke-width="1" opacity=".25"/>
+
+  <!-- Signo de interrogación flotante sobre la carta -->
+  <text x="358" y="668" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#f3ede3" opacity=".35">?</text>
+
+  <!-- Humo de la vela (trazos curvos) -->
+  <path d="M360 560 Q368 545 355 530 Q342 515 355 500" stroke="#e8ddd5" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".12"/>
+  <path d="M360 555 Q352 540 362 525" stroke="#e8ddd5" stroke-width="1" stroke-linecap="round" fill="none" opacity=".08"/>
+
+  <!-- Destellos de luz (partículas) -->
+  <circle cx="420" cy="540" r="1.5" fill="#f5e642" opacity=".4"/>
+  <circle cx="305" cy="520" r="1"   fill="#f5e642" opacity=".3"/>
+  <circle cx="460" cy="500" r="1"   fill="#f5e642" opacity=".25"/>
+  <circle cx="260" cy="560" r="1.5" fill="#f5e642" opacity=".2"/>
+
+  <!-- Texto superior: marca -->
+  <text x="360" y="80" text-anchor="middle" font-family="'Georgia', serif" font-size="11" fill="#f3ede3" letter-spacing="6" opacity=".3">HISTORIAS NEGRAS</text>
+  <line x1="200" y1="90" x2="310" y2="90" stroke="#f3ede3" stroke-width=".5" opacity=".15"/>
+  <line x1="410" y1="90" x2="520" y2="90" stroke="#f3ede3" stroke-width=".5" opacity=".15"/>
+
+  <!-- Texto inferior: tagline -->
+  <text x="360" y="840" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="15" fill="#f3ede3" opacity=".2">¿Puedes descubrir la verdad?</text>
+</svg>

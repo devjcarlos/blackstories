@@ -8,128 +8,205 @@ interface Props {
 
 const { acertijo, index = 0 } = Astro.props;
 const { title, dificultad, categoria, tiempoEstimado, imagen } = acertijo.data;
-const slug = acertijo.id;
-const staggerClass = `stagger-${Math.min(index + 1, 8)}`;
+const slug   = acertijo.id;
+const delay  = `d${Math.min(index + 1, 6)}`;
+const dark   = categoria === 'oscuro';
 
-const categoriaLabel: Record<string, string> = {
-  clasico:   'Clásico',
-  oscuro:    'Oscuro',
-  humor:     'Humor',
-  historico: 'Histórico',
-  cortito:   'Cortito',
-  surreal:   'Surreal',
+const labels: Record<string, string> = {
+  oscuro: 'Oscuro', surreal: 'Surreal', humor: 'Humor',
+  clasico: 'Clásico', historico: 'Histórico', cortito: 'Cortito',
 };
 
-// Extrae preview del enunciado
-const enunciado = acertijo.body.split('<!-- SOLUCIÓN -->')[0].trim();
-const preview = enunciado.length > 120 ? enunciado.slice(0, 117) + '…' : enunciado;
-
-const esOscuro = categoria === 'oscuro';
+const preview = (() => {
+  const txt = acertijo.body.split('<!-- SOLUCIÓN -->')[0].trim();
+  return txt.length > 110 ? txt.slice(0, 108) + '…' : txt;
+})();
 ---
 
 <a
   href={`/acertijos/${slug}`}
-  data-theme={categoria}
-  class={`card group block rounded-2xl overflow-hidden animate-fade-up ${staggerClass} transition-all duration-300 hover:-translate-y-1`}
-  style={`
-    background: var(--cat-bg);
-    border: 1.5px solid var(--cat-border);
-    box-shadow: 0 2px 8px rgba(0,0,0,${esOscuro ? '0.4' : '0.06'});
-  `}
+  data-cat={categoria}
+  class={`card anim ${delay}`}
 >
-  <!-- Imagen -->
-  <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
-    {imagen ? (
-      <img
-        src={imagen}
-        alt={title}
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        style={`view-transition-name: imagen-${slug}`}
-        loading="lazy"
-      />
-    ) : (
-      <div
-        class="w-full h-full flex items-center justify-center"
-        style={`
-          view-transition-name: imagen-${slug};
-          background: linear-gradient(135deg, var(--cat-border) 0%, var(--cat-bg) 100%);
-        `}
-      >
-        <svg viewBox="0 0 120 80" class="w-20 opacity-30" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="60" cy="35" r="20" stroke="currentColor" stroke-width="1.5" style={`color: var(--cat-accent)`}/>
-          <path d="M40 65 Q60 50 80 65" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-accent)`}/>
-          <line x1="60" y1="15" x2="60" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
-          <line x1="60" y1="55" x2="60" y2="62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
-          <line x1="40" y1="35" x2="33" y2="35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
-          <line x1="80" y1="35" x2="87" y2="35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
-        </svg>
-      </div>
-    )}
-
-    <!-- Badge categoría — esquina superior izquierda -->
-    <div class="absolute top-3 left-3">
-      <span
-        class="text-xs font-display font-600 px-2.5 py-1 rounded-full uppercase tracking-wide"
-        style={`
-          background: var(--cat-accent);
-          color: ${esOscuro ? '#f8ece8' : '#fff'};
-          letter-spacing: 0.06em;
-        `}
-      >
-        {categoriaLabel[categoria]}
-      </span>
-    </div>
+  <!-- Imagen / placeholder -->
+  <div class="card__img-wrap">
+    {imagen
+      ? <img
+          src={imagen}
+          alt={title}
+          class="card__img"
+          style={`view-transition-name: img-${slug}`}
+          loading="lazy"
+        />
+      : <div
+          class="card__placeholder"
+          style={`view-transition-name: img-${slug}`}
+        >
+          <svg viewBox="0 0 80 80" fill="none" class="card__placeholder-icon">
+            <circle cx="40" cy="38" r="18" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M24 64 Q40 52 56 64" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="40" y1="20" x2="40" y2="14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="40" y1="56" x2="40" y2="62" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="22" y1="38" x2="16" y2="38" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="58" y1="38" x2="64" y2="38" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+    }
+    <!-- Badge -->
+    <span class="card__badge">{labels[categoria]}</span>
   </div>
 
   <!-- Contenido -->
-  <div class="p-5 flex flex-col gap-3">
-
-    <!-- Título -->
+  <div class="card__body">
     <h2
-      class="font-display font-700 text-xl leading-tight transition-colors"
-      style={`
-        color: var(--cat-text);
-        view-transition-name: titulo-${slug};
-      `}
-    >
-      {title}
-    </h2>
+      class="card__title"
+      style={`view-transition-name: title-${slug}`}
+    >{title}</h2>
 
-    <!-- Preview enunciado -->
-    <p
-      class="font-serif text-sm leading-relaxed line-clamp-2 italic"
-      style="color: var(--cat-muted); font-size: 0.95rem;"
-    >
-      {preview}
-    </p>
+    <p class="card__preview">{preview}</p>
 
-    <!-- Footer: dificultad + tiempo -->
-    <div class="flex items-center justify-between pt-1">
-      <!-- Dificultad: 5 cuadraditos -->
-      <div class="flex items-center gap-1.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <span
-            class="w-2 h-2 rounded-sm"
-            style={`background: ${i < dificultad ? 'var(--cat-accent)' : 'var(--cat-border)'};`}
-          />
+    <div class="card__meta">
+      <!-- Dificultad -->
+      <div class="card__dots" aria-label={`Dificultad ${dificultad} de 5`}>
+        {Array.from({length: 5}).map((_, i) => (
+          <span class={`dot ${i < dificultad ? 'dot--on' : 'dot--off'}`}/>
         ))}
       </div>
-
       <!-- Tiempo -->
-      <div class="flex items-center gap-1" style="color: var(--cat-muted);">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="card__time">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
           <path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <span class="text-xs">{tiempoEstimado} min</span>
+        {tiempoEstimado} min
       </div>
     </div>
-
   </div>
 
-  <!-- Borde acento inferior — solo visible en hover -->
-  <div
-    class="h-0.5 w-0 group-hover:w-full transition-all duration-500"
-    style="background: var(--cat-accent);"
-  />
+  <!-- Barra acento inferior (hover) -->
+  <div class="card__accent-bar"></div>
 </a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    border: 1.5px solid var(--border, var(--cream-border));
+    background: var(--bg, var(--cream));
+    transition: box-shadow .2s, translate .2s;
+    position: relative;
+  }
+  .card:hover {
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--accent, var(--ink)) 12%, transparent);
+    translate: 0 -3px;
+  }
+
+  /* ── Imagen ─────────────────────────────────────────────────── */
+  .card__img-wrap {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+  }
+
+  .card__img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: scale .4s ease;
+  }
+  .card:hover .card__img { scale: 1.04; }
+
+  .card__placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--border, var(--cream-border)) 40%, var(--bg, var(--cream)));
+  }
+
+  .card__placeholder-icon {
+    width: 52px; height: 52px;
+    color: var(--accent, var(--muted));
+    opacity: .35;
+  }
+
+  .card__badge {
+    position: absolute;
+    top: 12px; left: 12px;
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: .6875rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background: var(--accent, var(--ink));
+    color: #fff;
+  }
+
+  /* ── Body ────────────────────────────────────────────────────── */
+  .card__body {
+    padding: 18px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .card__title {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: 1.125rem;
+    line-height: 1.2;
+    color: var(--tx, var(--ink));
+    letter-spacing: -.01em;
+  }
+
+  .card__preview {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: .9375rem;
+    line-height: 1.55;
+    color: var(--mu, var(--muted));
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+
+  .card__dots { display: flex; gap: 4px; align-items: center; }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 2px;
+  }
+  .dot--on  { background: var(--accent, var(--ink)); }
+  .dot--off { background: var(--border, var(--cream-border)); }
+
+  .card__time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .8125rem;
+    color: var(--mu, var(--muted));
+  }
+
+  /* ── Barra acento ────────────────────────────────────────────── */
+  .card__accent-bar {
+    height: 3px;
+    width: 0;
+    background: var(--accent, var(--ink));
+    transition: width .35s ease;
+  }
+  .card:hover .card__accent-bar { width: 100%; }
+</style>
