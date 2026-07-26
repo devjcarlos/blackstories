@@ -2,8 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GameMasterToggle from '../../components/GameMasterToggle.astro';
 import Timer from '../../components/Timer.astro';
-import DificultadBadge from '../../components/DificultadBadge.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const acertijos = await getCollection('acertijos');
@@ -17,12 +16,10 @@ const { acertijo, index, total, todos } = Astro.props;
 const { title, dificultad, categoria, tiempoEstimado, imagen } = acertijo.data;
 const slug = acertijo.id;
 
-// Separar enunciado y solución
-const partes = acertijo.body.split('<!-- SOLUCIÓN -->');
+const partes    = acertijo.body.split('<!-- SOLUCIÓN -->');
 const enunciado = partes[0].trim();
 const solucion  = (partes[1] ?? '').trim();
 
-// Slugs anterior / siguiente (circular)
 const prevSlug = todos[(index - 1 + total) % total]?.id;
 const nextSlug = todos[(index + 1) % total]?.id;
 
@@ -32,162 +29,194 @@ const categoriaLabel: Record<string, string> = {
   humor:     'Humor',
   historico: 'Histórico',
   cortito:   'Cortito',
+  surreal:   'Surreal',
 };
+
+const esOscuro = categoria === 'oscuro';
 ---
 
 <BaseLayout
   title={`${title} — Historias Negras`}
   description={enunciado.slice(0, 155)}
 >
-  <article class="max-w-3xl mx-auto px-4 py-12">
+  <!-- La página entera adopta el color de la categoría -->
+  <div data-theme={categoria} style="min-height: calc(100dvh - 56px);">
 
-    <!-- Volver -->
-    <a
-      href="/jugar"
-      class="inline-flex items-center gap-1.5 text-zinc-600 hover:text-zinc-400 text-sm mb-8 transition-colors group"
-      data-nav="back"
+    <!-- ─── Header de categoría ─────────────────────────────────── -->
+    <div
+      class="w-full"
+      style="background: var(--cat-bg); border-bottom: 1.5px solid var(--cat-border);"
     >
-      <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
-      </svg>
-      Todos los acertijos
-    </a>
+      <div class="max-w-3xl mx-auto px-5 py-10">
 
-    <!-- Imagen hero (View Transition morph con la card del grid) -->
-    <div class="relative rounded-2xl overflow-hidden mb-8 aspect-[16/7] bg-zinc-900">
-      {imagen ? (
-        <img
-          src={imagen}
-          alt={title}
-          class="w-full h-full object-cover"
-          style={`view-transition-name: imagen-${slug}`}
-        />
-      ) : (
-        <div
-          class="w-full h-full flex items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-950"
-          style={`view-transition-name: imagen-${slug}`}
+        <!-- Volver -->
+        <a
+          href="/jugar"
+          data-nav="back"
+          class="inline-flex items-center gap-1.5 text-sm font-display font-500 mb-8 transition-opacity hover:opacity-60 group"
+          style="color: var(--cat-muted);"
         >
-          <!-- Placeholder decorativo -->
-          <svg viewBox="0 0 200 120" class="w-40 opacity-10" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="100" cy="55" r="32" stroke="currentColor" stroke-width="1.2"/>
-            <path d="M68 95 Q100 75 132 95" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            <line x1="100" y1="23" x2="100" y2="12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            <line x1="100" y1="87" x2="100" y2="98" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            <line x1="68" y1="55" x2="57" y2="55" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            <line x1="132" y1="55" x2="143" y2="55" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
           </svg>
+          Todos los acertijos
+        </a>
+
+        <!-- Badge -->
+        <div class="mb-4">
+          <span
+            class="font-display font-700 text-xs px-3 py-1 rounded-full uppercase tracking-widest"
+            style="background: var(--cat-accent); color: #fff;"
+          >
+            {categoriaLabel[categoria]}
+          </span>
+        </div>
+
+        <!-- Título -->
+        <h1
+          class="font-display font-800 leading-tight mb-6"
+          style={`font-size: clamp(2.5rem, 6vw, 4.5rem); color: var(--cat-text); view-transition-name: titulo-${slug};`}
+        >
+          {title}
+        </h1>
+
+        <!-- Meta: dificultad + tiempo -->
+        <div class="flex flex-wrap items-center gap-5">
+          <div class="flex items-center gap-2">
+            <span class="font-display text-xs uppercase tracking-wide" style="color: var(--cat-muted);">Dif.</span>
+            <div class="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span
+                  class="w-2.5 h-2.5 rounded-sm"
+                  style={`background: ${i < dificultad ? 'var(--cat-accent)' : 'var(--cat-border)'};`}
+                />
+              ))}
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5" style="color: var(--cat-muted);">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
+              <path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="font-display text-xs">~{tiempoEstimado} min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Imagen hero (morph desde la card) -->
+      {imagen && (
+        <div class="max-w-3xl mx-auto px-5 pb-0">
+          <div class="rounded-t-2xl overflow-hidden" style="aspect-ratio: 16/6;">
+            <img
+              src={imagen}
+              alt={title}
+              class="w-full h-full object-cover"
+              style={`view-transition-name: imagen-${slug}`}
+            />
+          </div>
         </div>
       )}
-      <!-- Overlay degradado para legibilidad del título si fuera encima -->
-      <div class="absolute inset-0 bg-gradient-to-t from-zinc-950/60 via-transparent to-transparent pointer-events-none" />
     </div>
 
-    <!-- Metadata -->
-    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
-      <span class="text-xs font-medium px-2.5 py-1 rounded-full border border-zinc-700 text-zinc-400">
-        {categoriaLabel[categoria]}
-      </span>
-      <DificultadBadge nivel={dificultad} />
-      <div class="flex items-center gap-1.5 text-zinc-500 text-xs">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
-          <path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        ~{tiempoEstimado} minutos
-      </div>
-    </div>
-
-    <!-- Título (View Transition morph) -->
-    <h1
-      class="font-serif text-4xl sm:text-5xl text-zinc-100 leading-tight mb-8"
-      style={`view-transition-name: titulo-${slug}`}
+    <!-- ─── Contenido principal ─────────────────────────────────── -->
+    <div
+      class="max-w-3xl mx-auto px-5 py-12"
+      style="background: var(--color-base);"
     >
-      {title}
-    </h1>
 
-    <!-- Enunciado -->
-    <div class="card-glass rounded-xl p-6 mb-8 border-l-2 border-blood">
-      <div class="flex items-center gap-2 mb-4">
-        <div class="w-1 h-5 rounded-full bg-blood"></div>
-        <span class="text-xs font-medium text-zinc-500 uppercase tracking-wide">El enigma</span>
-      </div>
-      <p class="font-serif text-xl sm:text-2xl leading-relaxed text-zinc-100">
-        {enunciado}
-      </p>
-    </div>
-
-    <!-- Timer -->
-    <div class="card-glass rounded-xl p-5 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div>
-        <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-1">Cronómetro</p>
-        <p class="text-xs text-zinc-700">Se activa rojo a los {tiempoEstimado} min.</p>
-      </div>
-      <Timer tiempoEstimado={tiempoEstimado} />
-    </div>
-
-    <!-- Game Master Toggle + Solución -->
-    {solucion ? (
-      <GameMasterToggle solucion={solucion} />
-    ) : (
-      <p class="text-zinc-600 text-sm italic">No hay solución disponible para este acertijo.</p>
-    )}
-
-    <!-- Navegación entre acertijos -->
-    <nav class="flex items-center justify-between mt-12 pt-8 border-t border-zinc-800/50">
-      <a
-        href={`/acertijos/${prevSlug}`}
-        data-nav="prev"
-        class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900/30 hover:bg-zinc-800/30 text-zinc-400 hover:text-zinc-200 text-sm transition-all group"
+      <!-- Enunciado -->
+      <div
+        class="rounded-2xl p-7 mb-8"
+        style="background: var(--cat-bg); border: 1.5px solid var(--cat-border); border-left: 4px solid var(--cat-accent);"
       >
-        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
-        </svg>
-        Anterior
-      </a>
+        <p
+          class="font-display text-xs font-600 uppercase tracking-widest mb-4"
+          style="color: var(--cat-accent);"
+        >
+          El enigma
+        </p>
+        <p
+          class="font-serif leading-relaxed"
+          style={`font-size: 1.3rem; color: var(--cat-text);`}
+        >
+          {enunciado}
+        </p>
+      </div>
 
-      <span class="text-xs text-zinc-700 tabular-nums">
-        {index + 1} / {total}
-      </span>
-
-      <a
-        href={`/acertijos/${nextSlug}`}
-        data-nav="next"
-        class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900/30 hover:bg-zinc-800/30 text-zinc-400 hover:text-zinc-200 text-sm transition-all group"
+      <!-- Timer -->
+      <div
+        class="rounded-xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        style="background: var(--color-base-soft); border: 1.5px solid var(--color-base-border);"
       >
-        Siguiente
-        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-    </nav>
+        <div>
+          <p class="font-display text-xs font-600 uppercase tracking-wide mb-1" style="color: var(--color-muted);">Cronómetro</p>
+          <p class="text-xs" style="color: var(--color-base-border);">Se activa en rojo a los {tiempoEstimado} min.</p>
+        </div>
+        <Timer tiempoEstimado={tiempoEstimado} />
+      </div>
 
-  </article>
+      <!-- Game Master Toggle -->
+      {solucion ? (
+        <GameMasterToggle solucion={solucion} accentColor={`var(--cat-accent)`} darkCard={esOscuro} />
+      ) : (
+        <p class="text-sm italic" style="color: var(--color-muted);">No hay solución disponible.</p>
+      )}
+
+      <!-- Navegación -->
+      <nav
+        class="flex items-center justify-between mt-14 pt-8"
+        style="border-top: 1.5px solid var(--color-base-border);"
+      >
+        <a
+          href={`/acertijos/${prevSlug}`}
+          data-nav="prev"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-full font-display font-500 text-sm border transition-all group"
+          style="border-color: var(--color-base-border); color: var(--color-muted);"
+          onmouseover="this.style.borderColor='var(--color-ink)'; this.style.color='var(--color-ink)'"
+          onmouseout="this.style.borderColor='var(--color-base-border)'; this.style.color='var(--color-muted)'"
+        >
+          <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Anterior
+        </a>
+
+        <span class="font-display text-xs tabular-nums" style="color: var(--color-muted);">
+          {index + 1} / {total}
+        </span>
+
+        <a
+          href={`/acertijos/${nextSlug}`}
+          data-nav="next"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-full font-display font-500 text-sm border transition-all group"
+          style="border-color: var(--color-base-border); color: var(--color-muted);"
+          onmouseover="this.style.borderColor='var(--color-ink)'; this.style.color='var(--color-ink)'"
+          onmouseout="this.style.borderColor='var(--color-base-border)'; this.style.color='var(--color-muted)'"
+        >
+          Siguiente
+          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </nav>
+
+    </div>
+  </div>
 </BaseLayout>
 
 <script>
-  // ─── View Transitions: slide lateral entre acertijos ───────────────
-  // Añade clase al <html> antes de navegar para cambiar la dirección
-  function handleNavClick(e: MouseEvent) {
-    const link = (e.currentTarget as HTMLAnchorElement);
-    const nav  = link.dataset.nav;
-
-    if (nav === 'next') {
-      document.documentElement.classList.add('vt-next');
-      document.documentElement.classList.remove('vt-prev');
-    } else if (nav === 'prev') {
-      document.documentElement.classList.add('vt-prev');
-      document.documentElement.classList.remove('vt-next');
-    } else {
-      // volver al listado: fade normal
-      document.documentElement.classList.remove('vt-next', 'vt-prev');
-    }
+  function initNavTransitions() {
+    document.querySelectorAll<HTMLAnchorElement>('[data-nav]').forEach(link => {
+      link.addEventListener('click', () => {
+        const nav = link.dataset.nav;
+        document.documentElement.classList.remove('vt-next', 'vt-prev');
+        if (nav === 'next') document.documentElement.classList.add('vt-next');
+        if (nav === 'prev') document.documentElement.classList.add('vt-prev');
+      });
+    });
   }
 
-  document.querySelectorAll<HTMLAnchorElement>('[data-nav]').forEach(link => {
-    link.addEventListener('click', handleNavClick);
-  });
-
-  // Limpiar clases cuando la transición termina
+  document.addEventListener('astro:page-load', initNavTransitions);
   document.addEventListener('astro:after-preparation', () => {
     document.documentElement.classList.remove('vt-next', 'vt-prev');
   });

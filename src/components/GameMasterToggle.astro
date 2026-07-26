@@ -1,31 +1,57 @@
 ---
 interface Props {
   solucion: string;
+  accentColor?: string;
+  darkCard?: boolean;
 }
-const { solucion } = Astro.props;
+const {
+  solucion,
+  accentColor = 'var(--color-blood)',
+  darkCard = false,
+} = Astro.props;
+
+const overlayBg     = darkCard ? '#0f0000' : '#1a1a2e';
+const overlayText   = darkCard ? '#9a7070' : '#9090b0';
+const btnBg         = darkCard ? 'rgba(192,57,43,0.15)' : 'rgba(100,80,180,0.12)';
+const btnBorder     = darkCard ? 'rgba(192,57,43,0.3)'  : 'rgba(100,80,180,0.25)';
 ---
 
-<section class="mt-10 relative">
-  <!-- Overlay cortina (cubre la solución) -->
+<!-- Contenedor relativo que envuelve overlay + solución -->
+<section class="relative mt-8">
+
+  <!-- Overlay cortina -->
   <div
     id="gm-overlay"
-    class="cortina-overlay absolute inset-0 z-10 rounded-xl flex items-center justify-center cursor-pointer group/overlay"
-    style="background: linear-gradient(135deg, #0f0000 0%, #1a0000 50%, #0f0000 100%);"
+    class="cortina-overlay absolute inset-0 z-10 rounded-2xl flex items-center justify-center cursor-pointer"
+    style={`background: ${overlayBg};`}
     role="button"
     tabindex="0"
-    aria-label="Revelar solución (solo para el Game Master)"
+    aria-label="Revelar solución — solo para el Game Master"
   >
-    <!-- Contenido del overlay -->
-    <div class="text-center px-6 pointer-events-none">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full border border-red-900/50 bg-red-950/30 mb-4 group-hover/overlay:border-red-700/70 group-hover/overlay:bg-red-950/50 transition-all duration-300">
-        <svg class="w-7 h-7 text-red-700 group-hover/overlay:text-red-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <div class="text-center px-6 select-none">
+      <!-- Icono -->
+      <div
+        class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-5 transition-all duration-300"
+        style={`background: ${btnBg}; border: 1.5px solid ${btnBorder};`}
+        id="gm-icon-wrap"
+      >
+        <svg class="w-6 h-6" style={`color: ${accentColor};`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <p class="text-zinc-400 text-sm font-medium tracking-wide uppercase">Solución</p>
-      <p class="text-zinc-600 text-xs mt-1">Solo para el Game Master</p>
-      <div class="mt-4 px-4 py-2 rounded-lg border border-red-900/30 bg-red-950/20 group-hover/overlay:bg-red-950/40 transition-colors">
-        <span class="text-red-500 text-xs font-medium">Pulsa para revelar</span>
+
+      <p class="font-display font-600 text-sm uppercase tracking-widest mb-1" style={`color: ${overlayText};`}>
+        Solución
+      </p>
+      <p class="text-xs mb-5" style={`color: ${overlayText}; opacity: 0.6;`}>
+        Solo para el Game Master
+      </p>
+
+      <div
+        class="px-5 py-2 rounded-full font-display font-600 text-xs uppercase tracking-widest"
+        style={`background: ${accentColor}22; border: 1.5px solid ${accentColor}55; color: ${accentColor};`}
+      >
+        Pulsa para revelar
       </div>
     </div>
   </div>
@@ -37,50 +63,60 @@ const { solucion } = Astro.props;
     role="dialog"
     aria-modal="true"
   >
-    <!-- Backdrop -->
-    <div id="gm-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div id="gm-modal-backdrop" class="absolute inset-0" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);"></div>
 
-    <!-- Card del modal -->
-    <div class="relative z-10 card-glass rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-zinc-800 animate-fade-up">
-      <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-950/50 border border-red-900/50 mb-5">
-        <svg class="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <div
+      class="relative z-10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl animate-fade-up"
+      style="background: var(--color-base); border: 1.5px solid var(--color-base-border);"
+    >
+      <div
+        class="inline-flex items-center justify-center w-12 h-12 rounded-full mb-5"
+        style={`background: ${accentColor}15; border: 1.5px solid ${accentColor}40;`}
+      >
+        <svg class="w-5 h-5" style={`color: ${accentColor};`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
           <circle cx="12" cy="12" r="3"/>
         </svg>
       </div>
 
-      <h3 class="text-zinc-100 text-lg font-semibold mb-2">¿Eres el Game Master?</h3>
-      <p class="text-zinc-500 text-sm leading-relaxed mb-6">
-        La solución quedará visible en pantalla. Asegúrate de que los demás jugadores no estén mirando.
+      <h3 class="font-display font-700 text-lg mb-2" style="color: var(--color-ink);">¿Eres el Game Master?</h3>
+      <p class="text-sm leading-relaxed mb-7" style="color: var(--color-muted);">
+        La solución quedará visible. Asegúrate de que los demás jugadores no estén mirando.
       </p>
 
       <div class="flex gap-3">
         <button
           id="gm-cancel"
-          class="flex-1 py-2.5 rounded-lg border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 text-sm transition-all"
+          class="flex-1 py-2.5 rounded-full font-display font-500 text-sm border transition-all"
+          style="border-color: var(--color-base-border); color: var(--color-muted);"
         >
           Cancelar
         </button>
         <button
           id="gm-confirm"
-          class="flex-1 py-2.5 rounded-lg bg-red-700 hover:bg-red-600 text-white text-sm font-medium transition-all hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] active:scale-95"
+          class="flex-1 py-2.5 rounded-full font-display font-600 text-sm text-white transition-all hover:opacity-90 active:scale-95"
+          style={`background: ${accentColor};`}
         >
-          Soy el Game Master
+          Soy el GM
         </button>
       </div>
     </div>
   </div>
 
   <!-- Solución (debajo del overlay) -->
-  <div class="rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900/50 p-6 min-h-[120px]">
+  <div
+    class="rounded-2xl p-7"
+    style="background: var(--color-base-soft); border: 1.5px solid var(--color-base-border); min-height: 140px;"
+  >
     <div class="flex items-center gap-2 mb-4">
-      <div class="w-1 h-5 rounded-full bg-blood"></div>
-      <h3 class="text-sm font-medium text-zinc-400 uppercase tracking-wide">Solución</h3>
+      <div class="w-1 h-5 rounded-full" style={`background: ${accentColor};`}></div>
+      <span class="font-display text-xs font-600 uppercase tracking-widest" style="color: var(--color-muted);">Solución</span>
     </div>
-    <p class="font-serif text-xl leading-relaxed text-zinc-200" id="solucion-texto">
+    <p class="font-serif text-xl leading-relaxed" style="color: var(--color-ink); font-size: 1.2rem;">
       {solucion}
     </p>
   </div>
+
 </section>
 
 <script>
@@ -91,7 +127,6 @@ const { solucion } = Astro.props;
     const btnCancel  = document.getElementById('gm-cancel');
     const btnConfirm = document.getElementById('gm-confirm');
 
-    // Si no están los elementos en este page, no hacer nada
     if (!overlay || !modal) return;
 
     let revelado = false;
@@ -109,15 +144,8 @@ const { solucion } = Astro.props;
     function revelarSolucion() {
       cerrarModal();
       revelado = true;
-
-      // Activar la animación de cortina (solo CSS, sin startViewTransition
-      // para no interferir con el router de Astro)
       overlay.classList.add('revealed');
-
-      // Guardar en sessionStorage para restaurar si navegan y vuelven
       sessionStorage.setItem(`gm-${window.location.pathname}`, 'revealed');
-
-      // Quitar del tab order y accesibilidad una vez animado
       setTimeout(() => {
         overlay.setAttribute('aria-hidden', 'true');
         overlay.setAttribute('tabindex', '-1');
@@ -125,7 +153,7 @@ const { solucion } = Astro.props;
       }, 850);
     }
 
-    // Restaurar estado si ya se reveló en esta sesión
+    // Restaurar si ya se reveló
     if (sessionStorage.getItem(`gm-${window.location.pathname}`) === 'revealed') {
       revelado = true;
       overlay.classList.add('revealed');
@@ -138,16 +166,13 @@ const { solucion } = Astro.props;
     overlay.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') abrirModal();
     });
-
     backdrop?.addEventListener('click', cerrarModal);
     btnCancel?.addEventListener('click', cerrarModal);
     btnConfirm?.addEventListener('click', revelarSolucion);
-
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !modal.classList.contains('hidden')) cerrarModal();
     });
   }
 
-  // Se ejecuta en carga inicial Y tras cada navegación con View Transitions
   document.addEventListener('astro:page-load', initGameMaster);
 </script>

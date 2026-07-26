@@ -7,9 +7,8 @@ interface Props {
 }
 
 const { acertijo, index = 0 } = Astro.props;
-const { title, dificultad, categoria, tiempoEstimado, imagen, tags } = acertijo.data;
+const { title, dificultad, categoria, tiempoEstimado, imagen } = acertijo.data;
 const slug = acertijo.id;
-
 const staggerClass = `stagger-${Math.min(index + 1, 8)}`;
 
 const categoriaLabel: Record<string, string> = {
@@ -18,92 +17,106 @@ const categoriaLabel: Record<string, string> = {
   humor:     'Humor',
   historico: 'Histórico',
   cortito:   'Cortito',
+  surreal:   'Surreal',
 };
 
-const categoriaColor: Record<string, string> = {
-  clasico:   'text-amber-400 bg-amber-400/10 border-amber-400/20',
-  oscuro:    'text-red-400 bg-red-400/10 border-red-400/20',
-  humor:     'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
-  historico: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-  cortito:   'text-violet-400 bg-violet-400/10 border-violet-400/20',
-};
+// Extrae preview del enunciado
+const enunciado = acertijo.body.split('<!-- SOLUCIÓN -->')[0].trim();
+const preview = enunciado.length > 120 ? enunciado.slice(0, 117) + '…' : enunciado;
 
-// Extrae solo el enunciado (antes del separador <!-- SOLUCIÓN -->)
-const { body } = acertijo;
-const enunciado = body.split('<!-- SOLUCIÓN -->')[0].trim();
-const preview = enunciado.length > 130 ? enunciado.slice(0, 127) + '…' : enunciado;
+const esOscuro = categoria === 'oscuro';
 ---
 
 <a
   href={`/acertijos/${slug}`}
-  class={`group block card-glass rounded-xl overflow-hidden animate-fade-up ${staggerClass} hover:border-zinc-600 hover:shadow-[0_0_40px_rgba(220,38,38,0.08)] transition-all duration-300`}
+  data-theme={categoria}
+  class={`card group block rounded-2xl overflow-hidden animate-fade-up ${staggerClass} transition-all duration-300 hover:-translate-y-1`}
+  style={`
+    background: var(--cat-bg);
+    border: 1.5px solid var(--cat-border);
+    box-shadow: 0 2px 8px rgba(0,0,0,${esOscuro ? '0.4' : '0.06'});
+  `}
 >
-  <!-- Imagen / placeholder -->
-  <div class="relative aspect-[4/3] overflow-hidden bg-zinc-900">
+  <!-- Imagen -->
+  <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
     {imagen ? (
       <img
         src={imagen}
         alt={title}
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         style={`view-transition-name: imagen-${slug}`}
         loading="lazy"
       />
     ) : (
       <div
-        class="w-full h-full flex items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-950"
-        style={`view-transition-name: imagen-${slug}`}
+        class="w-full h-full flex items-center justify-center"
+        style={`
+          view-transition-name: imagen-${slug};
+          background: linear-gradient(135deg, var(--cat-border) 0%, var(--cat-bg) 100%);
+        `}
       >
-        <svg viewBox="0 0 120 80" class="w-24 opacity-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="60" cy="35" r="20" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M40 65 Q60 50 80 65" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="60" y1="15" x2="60" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="60" y1="55" x2="60" y2="62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="40" y1="35" x2="33" y2="35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="80" y1="35" x2="87" y2="35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <svg viewBox="0 0 120 80" class="w-20 opacity-30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="35" r="20" stroke="currentColor" stroke-width="1.5" style={`color: var(--cat-accent)`}/>
+          <path d="M40 65 Q60 50 80 65" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-accent)`}/>
+          <line x1="60" y1="15" x2="60" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
+          <line x1="60" y1="55" x2="60" y2="62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
+          <line x1="40" y1="35" x2="33" y2="35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
+          <line x1="80" y1="35" x2="87" y2="35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style={`color: var(--cat-muted)`}/>
         </svg>
       </div>
     )}
 
-    <!-- Overlay degradado en hover -->
-    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-    <!-- Badge categoría -->
+    <!-- Badge categoría — esquina superior izquierda -->
     <div class="absolute top-3 left-3">
-      <span class={`text-xs font-medium px-2 py-0.5 rounded-full border ${categoriaColor[categoria]}`}>
+      <span
+        class="text-xs font-display font-600 px-2.5 py-1 rounded-full uppercase tracking-wide"
+        style={`
+          background: var(--cat-accent);
+          color: ${esOscuro ? '#f8ece8' : '#fff'};
+          letter-spacing: 0.06em;
+        `}
+      >
         {categoriaLabel[categoria]}
       </span>
     </div>
   </div>
 
   <!-- Contenido -->
-  <div class="p-4 flex flex-col gap-3">
+  <div class="p-5 flex flex-col gap-3">
+
     <!-- Título -->
     <h2
-      class="font-serif text-xl text-zinc-100 leading-snug group-hover:text-white transition-colors"
-      style={`view-transition-name: titulo-${slug}`}
+      class="font-display font-700 text-xl leading-tight transition-colors"
+      style={`
+        color: var(--cat-text);
+        view-transition-name: titulo-${slug};
+      `}
     >
       {title}
     </h2>
 
-    <!-- Preview del enunciado -->
-    <p class="text-sm text-zinc-500 leading-relaxed line-clamp-2 font-serif italic">
+    <!-- Preview enunciado -->
+    <p
+      class="font-serif text-sm leading-relaxed line-clamp-2 italic"
+      style="color: var(--cat-muted); font-size: 0.95rem;"
+    >
       {preview}
     </p>
 
-    <!-- Metadata footer -->
+    <!-- Footer: dificultad + tiempo -->
     <div class="flex items-center justify-between pt-1">
-      <!-- Dificultad -->
+      <!-- Dificultad: 5 cuadraditos -->
       <div class="flex items-center gap-1.5">
-        <span class="text-xs text-zinc-600 mr-0.5">Dif.</span>
         {Array.from({ length: 5 }).map((_, i) => (
           <span
-            class={`dificultad-dot ${i < dificultad ? 'bg-blood' : 'bg-zinc-700'}`}
+            class="w-2 h-2 rounded-sm"
+            style={`background: ${i < dificultad ? 'var(--cat-accent)' : 'var(--cat-border)'};`}
           />
         ))}
       </div>
 
-      <!-- Tiempo estimado -->
-      <div class="flex items-center gap-1 text-zinc-500">
+      <!-- Tiempo -->
+      <div class="flex items-center gap-1" style="color: var(--cat-muted);">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
           <path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/>
@@ -111,5 +124,12 @@ const preview = enunciado.length > 130 ? enunciado.slice(0, 127) + '…' : enunc
         <span class="text-xs">{tiempoEstimado} min</span>
       </div>
     </div>
+
   </div>
+
+  <!-- Borde acento inferior — solo visible en hover -->
+  <div
+    class="h-0.5 w-0 group-hover:w-full transition-all duration-500"
+    style="background: var(--cat-accent);"
+  />
 </a>

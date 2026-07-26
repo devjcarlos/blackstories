@@ -1,30 +1,76 @@
 /* ─── Google Fonts (must come before other @imports) ───────────── */
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500&display=swap');
 
 @import "tailwindcss";
 
-/* ─── Design tokens ────────────────────────────────────────────── */
+/* ─── Design tokens — base ──────────────────────────────────────── */
 @theme {
-  --color-ink:       #09090b;
-  --color-ink-soft:  #18181b;
-  --color-border:    #27272a;
-  --color-muted:     #52525b;
-  --color-text:      #e4e4e7;
-  --color-text-soft: #a1a1aa;
-  --color-blood:     #dc2626;
-  --color-blood-dim: #7f1d1d;
-  --color-blood-glow:#ef4444;
+  /* Base clara (nueva) */
+  --color-base:        #f4efe6;
+  --color-base-soft:   #ede7da;
+  --color-base-border: #d9d0c0;
+  --color-ink:         #1a1714;
+  --color-ink-soft:    #3d3830;
+  --color-muted:       #8a7f72;
 
-  --font-serif: 'Crimson Pro', Georgia, serif;
-  --font-sans:  'Inter', system-ui, sans-serif;
+  /* Acento de marca */
+  --color-blood:       #c0392b;
+  --color-blood-light: #e74c3c;
+
+  /* ── Categoría: oscuro ──────────────────────────────────────── */
+  --cat-oscuro-bg:      #100c0c;
+  --cat-oscuro-border:  #2a1515;
+  --cat-oscuro-accent:  #c0392b;
+  --cat-oscuro-text:    #e8e0d8;
+  --cat-oscuro-muted:   #6b5555;
+
+  /* ── Categoría: surreal ─────────────────────────────────────── */
+  --cat-surreal-bg:     #f2ecfa;
+  --cat-surreal-border: #c9aaed;
+  --cat-surreal-accent: #7c3aed;
+  --cat-surreal-text:   #1a1420;
+  --cat-surreal-muted:  #7a6890;
+
+  /* ── Categoría: humor ───────────────────────────────────────── */
+  --cat-humor-bg:       #fef9ec;
+  --cat-humor-border:   #f0c040;
+  --cat-humor-accent:   #d97706;
+  --cat-humor-text:     #1a1200;
+  --cat-humor-muted:    #8a7020;
+
+  /* ── Categoría: clásico ─────────────────────────────────────── */
+  --cat-clasico-bg:     #eef2f8;
+  --cat-clasico-border: #9ab5d4;
+  --cat-clasico-accent: #1d4ed8;
+  --cat-clasico-text:   #0f1a2e;
+  --cat-clasico-muted:  #5a7090;
+
+  /* ── Categoría: cortito ─────────────────────────────────────── */
+  --cat-cortito-bg:     #eef8f2;
+  --cat-cortito-border: #80c9a0;
+  --cat-cortito-accent: #15803d;
+  --cat-cortito-text:   #0a1f14;
+  --cat-cortito-muted:  #4a8060;
+
+  /* ── Categoría: histórico ───────────────────────────────────── */
+  --cat-historico-bg:     #faf4ec;
+  --cat-historico-border: #d4b88a;
+  --cat-historico-accent: #92400e;
+  --cat-historico-text:   #1a1008;
+  --cat-historico-muted:  #8a6040;
+
+  /* Tipografías */
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-serif:   'Crimson Pro', Georgia, serif;
+  --font-sans:    'Inter', system-ui, sans-serif;
 }
 
 /* ─── Base ──────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
-  background-color: var(--color-ink);
-  color: var(--color-text);
+  background-color: var(--color-base);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -32,21 +78,25 @@ html {
 
 body {
   min-height: 100dvh;
-  position: relative;
   overflow-x: hidden;
 }
 
-/* Grain texture overlay */
+/* Grano de papel sutil — más tenue que antes, sobre fondo claro */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
   background-size: 256px 256px;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.35;
+  opacity: 0.2;
+  mix-blend-mode: multiply;
 }
+
+/* ─── Tipografía ────────────────────────────────────────────────── */
+.font-display { font-family: var(--font-display); }
+.font-serif   { font-family: var(--font-serif); }
 
 /* ─── View Transitions ──────────────────────────────────────────── */
 @keyframes vt-slide-in-right {
@@ -65,89 +115,36 @@ body::before {
   from { opacity: 1; transform: translateX(0); }
   to   { opacity: 0; transform: translateX(40px); }
 }
-@keyframes vt-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes vt-fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
+@keyframes vt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vt-fade-out { from { opacity: 1; } to { opacity: 0; } }
 
-/* Default page transition: crossfade */
-::view-transition-old(root) {
-  animation: 220ms ease-in vt-fade-out;
-}
-::view-transition-new(root) {
-  animation: 260ms ease-out vt-fade-in;
-}
+::view-transition-old(root) { animation: 220ms ease-in  vt-fade-out; }
+::view-transition-new(root) { animation: 260ms ease-out vt-fade-in; }
 
-/* Navegación hacia la derecha (siguiente acertijo) */
-html.vt-next::view-transition-old(root) {
-  animation: 260ms ease-in vt-slide-out-left;
-}
-html.vt-next::view-transition-new(root) {
-  animation: 300ms ease-out vt-slide-in-right;
-}
+html.vt-next::view-transition-old(root) { animation: 260ms ease-in  vt-slide-out-left; }
+html.vt-next::view-transition-new(root) { animation: 300ms ease-out vt-slide-in-right; }
+html.vt-prev::view-transition-old(root) { animation: 260ms ease-in  vt-slide-out-right; }
+html.vt-prev::view-transition-new(root) { animation: 300ms ease-out vt-slide-in-left; }
 
-/* Navegación hacia la izquierda (anterior acertijo) */
-html.vt-prev::view-transition-old(root) {
-  animation: 260ms ease-in vt-slide-out-right;
-}
-html.vt-prev::view-transition-new(root) {
-  animation: 300ms ease-out vt-slide-in-left;
-}
-
-/* Imagen: morph hero (se anima con la API nativa) */
 ::view-transition-group(hero-image) {
-  animation-duration: 400ms;
+  animation-duration: 420ms;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 ::view-transition-old(hero-image),
-::view-transition-new(hero-image) {
-  height: 100%;
-  overflow: clip;
-}
+::view-transition-new(hero-image) { height: 100%; overflow: clip; }
 
-/* Título: morph hero */
 ::view-transition-group(hero-title) {
   animation-duration: 380ms;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── Utilidades propias ────────────────────────────────────────── */
-.font-serif { font-family: var(--font-serif); }
-
-.text-blood    { color: var(--color-blood); }
-.bg-blood      { background-color: var(--color-blood); }
-.border-blood  { border-color: var(--color-blood); }
-
-/* Card glassmorphism */
-.card-glass {
-  background: rgba(24, 24, 27, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(39, 39, 42, 0.8);
-}
-
-/* Dificultad dots */
-.dificultad-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
 /* ─── Animaciones de entrada ─────────────────────────────────────── */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+.animate-fade-up { animation: fade-up 0.5s ease-out both; }
 
-.animate-fade-up {
-  animation: fade-up 0.5s ease-out both;
-}
-
-/* Stagger para cards del grid */
 .stagger-1 { animation-delay: 60ms; }
 .stagger-2 { animation-delay: 120ms; }
 .stagger-3 { animation-delay: 180ms; }
@@ -158,40 +155,73 @@ html.vt-prev::view-transition-new(root) {
 .stagger-8 { animation-delay: 480ms; }
 
 /* ─── Reveal cortina ─────────────────────────────────────────────── */
-@keyframes cortina-bajar {
-  from { clip-path: inset(0 0 0 0); }
-  to   { clip-path: inset(0 0 100% 0); }
-}
-
 .cortina-overlay {
   clip-path: inset(0 0 0 0);
   transition: clip-path 800ms cubic-bezier(0.76, 0, 0.24, 1);
 }
-
-.cortina-overlay.revealed {
-  clip-path: inset(0 0 100% 0);
-}
+.cortina-overlay.revealed { clip-path: inset(0 0 100% 0); }
 
 /* ─── Timer ──────────────────────────────────────────────────────── */
 @keyframes pulse-red {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.5; }
 }
-
-.timer-urgent {
-  animation: pulse-red 1s ease-in-out infinite;
-  color: var(--color-blood-glow);
-}
+.timer-urgent { animation: pulse-red 1s ease-in-out infinite; color: var(--color-blood-light); }
 
 /* ─── Scrollbar ─────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--color-ink); }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--color-base); }
+::-webkit-scrollbar-thumb { background: var(--color-base-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
 
-/* ─── Focus visible ──────────────────────────────────────────────── */
+/* ─── Focus ──────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--color-blood);
   outline-offset: 3px;
   border-radius: 4px;
+}
+
+/* ─── Utilidades de categoría ────────────────────────────────────── */
+/* Se usan como data-cat="oscuro" etc. en los componentes */
+[data-theme="oscuro"] {
+  --cat-bg:     var(--cat-oscuro-bg);
+  --cat-border: var(--cat-oscuro-border);
+  --cat-accent: var(--cat-oscuro-accent);
+  --cat-text:   var(--cat-oscuro-text);
+  --cat-muted:  var(--cat-oscuro-muted);
+}
+[data-theme="surreal"] {
+  --cat-bg:     var(--cat-surreal-bg);
+  --cat-border: var(--cat-surreal-border);
+  --cat-accent: var(--cat-surreal-accent);
+  --cat-text:   var(--cat-surreal-text);
+  --cat-muted:  var(--cat-surreal-muted);
+}
+[data-theme="humor"] {
+  --cat-bg:     var(--cat-humor-bg);
+  --cat-border: var(--cat-humor-border);
+  --cat-accent: var(--cat-humor-accent);
+  --cat-text:   var(--cat-humor-text);
+  --cat-muted:  var(--cat-humor-muted);
+}
+[data-theme="clasico"] {
+  --cat-bg:     var(--cat-clasico-bg);
+  --cat-border: var(--cat-clasico-border);
+  --cat-accent: var(--cat-clasico-accent);
+  --cat-text:   var(--cat-clasico-text);
+  --cat-muted:  var(--cat-clasico-muted);
+}
+[data-theme="cortito"] {
+  --cat-bg:     var(--cat-cortito-bg);
+  --cat-border: var(--cat-cortito-border);
+  --cat-accent: var(--cat-cortito-accent);
+  --cat-text:   var(--cat-cortito-text);
+  --cat-muted:  var(--cat-cortito-muted);
+}
+[data-theme="historico"] {
+  --cat-bg:     var(--cat-historico-bg);
+  --cat-border: var(--cat-historico-border);
+  --cat-accent: var(--cat-historico-accent);
+  --cat-text:   var(--cat-historico-text);
+  --cat-muted:  var(--cat-historico-muted);
 }

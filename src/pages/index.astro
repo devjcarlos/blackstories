@@ -8,97 +8,185 @@ const destacados = acertijos.filter(a => a.data.destacado).slice(0, 3);
 ---
 
 <BaseLayout>
-  <!-- ─── Hero ────────────────────────────────────────────────────── -->
-  <section class="relative min-h-[85dvh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
 
-    <!-- Fondo: radial glow rojo muy sutil -->
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-red-950/30 blur-[120px]"></div>
-    </div>
+  <!-- ─── Hero editorial ───────────────────────────────────────── -->
+  <section class="max-w-6xl mx-auto px-5 pt-16 pb-20">
+    <div class="grid lg:grid-cols-[1fr_auto] gap-12 items-end">
 
-    <!-- Eyebrow -->
-    <p class="animate-fade-up text-xs font-medium tracking-[0.2em] uppercase text-zinc-500 mb-6">
-      El juego de fiesta de sí o no
-    </p>
+      <!-- Texto izquierda -->
+      <div>
+        <!-- Eyebrow -->
+        <p
+          class="animate-fade-up font-display text-xs font-600 tracking-[0.18em] uppercase mb-5"
+          style="color: var(--color-blood);"
+        >
+          El juego de fiesta de sí o no
+        </p>
 
-    <!-- Título principal -->
-    <h1 class="animate-fade-up stagger-1 font-serif text-6xl sm:text-7xl md:text-8xl font-semibold text-zinc-100 leading-[0.95] tracking-tight mb-6 max-w-3xl">
-      Historias<br/>
-      <span class="text-blood">Negras</span>
-    </h1>
+        <!-- Título: tipografía display grande, contraste fuerte -->
+        <h1
+          class="animate-fade-up stagger-1 font-display leading-[0.9] tracking-tight mb-8"
+          style="font-size: clamp(4rem, 10vw, 9rem); font-weight: 800; color: var(--color-ink);"
+        >
+          Historias<br/>
+          <span style="color: var(--color-blood);">Negras</span>
+        </h1>
 
-    <!-- Subtítulo -->
-    <p class="animate-fade-up stagger-2 font-serif text-xl text-zinc-400 max-w-xl leading-relaxed mb-10 italic">
-      Un enigma. Preguntas de sí o no. Y una historia que nadie esperaba.
-    </p>
+        <!-- Subtítulo -->
+        <p
+          class="animate-fade-up stagger-2 font-serif text-xl max-w-lg leading-relaxed mb-10"
+          style="color: var(--color-muted); font-size: 1.25rem;"
+        >
+          Un enigma. Preguntas de sí o no.<br/>
+          <em>Y una historia que nadie esperaba.</em>
+        </p>
 
-    <!-- CTAs -->
-    <div class="animate-fade-up stagger-3 flex flex-col sm:flex-row items-center gap-3">
-      <a
-        href="/jugar"
-        class="px-7 py-3.5 rounded-full bg-blood hover:bg-red-500 text-white font-medium text-sm tracking-wide transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95"
-      >
-        Empezar a jugar
-      </a>
-      <a
-        href="/como-jugar"
-        class="px-7 py-3.5 rounded-full border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-zinc-200 text-sm tracking-wide transition-all hover:bg-zinc-900"
-      >
-        Cómo funciona
-      </a>
-    </div>
+        <!-- CTAs -->
+        <div class="animate-fade-up stagger-3 flex flex-wrap items-center gap-3">
+          <a
+            href="/jugar"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-display font-600 text-sm tracking-wide transition-all duration-200 hover:scale-105 active:scale-95"
+            style="background: var(--color-ink); color: var(--color-base);"
+            onmouseover="this.style.background='var(--color-blood)'"
+            onmouseout="this.style.background='var(--color-ink)'"
+          >
+            Empezar a jugar
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a
+            href="/como-jugar"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-display font-500 text-sm border transition-all duration-200"
+            style="border-color: var(--color-base-border); color: var(--color-muted);"
+            onmouseover="this.style.borderColor='var(--color-ink)'; this.style.color='var(--color-ink)'"
+            onmouseout="this.style.borderColor='var(--color-base-border)'; this.style.color='var(--color-muted)'"
+          >
+            Cómo funciona
+          </a>
+        </div>
+      </div>
 
-    <!-- Scroll indicator -->
-    <div class="animate-fade-up stagger-4 absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-zinc-700">
-      <span class="text-xs tracking-widest uppercase">Ver acertijos</span>
-      <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/>
-      </svg>
+      <!-- Decoración derecha: cuadrícula de colores de categoría -->
+      <div class="animate-fade-up stagger-2 hidden lg:grid grid-cols-2 gap-3 w-52">
+        {[
+          { label: 'Oscuro',    color: '#100c0c', text: '#c0392b' },
+          { label: 'Surreal',   color: '#f2ecfa', text: '#7c3aed' },
+          { label: 'Humor',     color: '#fef9ec', text: '#d97706' },
+          { label: 'Clásico',   color: '#eef2f8', text: '#1d4ed8' },
+          { label: 'Histórico', color: '#faf4ec', text: '#92400e' },
+          { label: 'Cortito',   color: '#eef8f2', text: '#15803d' },
+        ].map((cat, i) => (
+          <div
+            class={`rounded-xl p-4 flex flex-col justify-end stagger-${i + 1} animate-fade-up`}
+            style={`background: ${cat.color}; aspect-ratio: 1; border: 1.5px solid ${cat.text}22;`}
+          >
+            <span
+              class="font-display text-xs font-700 uppercase tracking-wide"
+              style={`color: ${cat.text};`}
+            >
+              {cat.label}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
+  <!-- ─── Separador ─────────────────────────────────────────────── -->
+  <div
+    class="border-t max-w-6xl mx-auto px-5"
+    style="border-color: var(--color-base-border);"
+  />
+
   <!-- ─── Cómo funciona ─────────────────────────────────────────── -->
-  <section class="max-w-4xl mx-auto px-4 py-20">
-    <h2 class="font-serif text-3xl text-center text-zinc-200 mb-12">¿Cómo se juega?</h2>
-    <div class="grid sm:grid-cols-3 gap-8 text-center">
+  <section class="max-w-6xl mx-auto px-5 py-20">
+    <p
+      class="font-display text-xs font-600 tracking-[0.18em] uppercase mb-8"
+      style="color: var(--color-blood);"
+    >
+      Las reglas
+    </p>
+    <div class="grid sm:grid-cols-3 gap-10">
       {[
         {
-          numero: '01',
+          num: '01',
           titulo: 'El Game Master lee el enigma',
           texto: 'Solo él conoce la solución. El resto del grupo escucha el enunciado misterioso.',
         },
         {
-          numero: '02',
+          num: '02',
           titulo: 'El grupo hace preguntas',
-          texto: 'Las únicas respuestas posibles son "sí", "no" o "no es relevante". Nada más.',
+          texto: 'Las únicas respuestas posibles son "sí", "no" o "no es relevante". Sin más pistas.',
         },
         {
-          numero: '03',
+          num: '03',
           titulo: 'Se revela la verdad',
           texto: 'Cuando alguien adivina, el Game Master pulsa revelar y la historia completa aparece.',
         },
       ].map((paso, i) => (
-        <div class={`animate-fade-up stagger-${i + 1} flex flex-col items-center gap-4`}>
-          <span class="font-mono text-5xl font-bold text-blood/30">{paso.numero}</span>
-          <h3 class="font-serif text-lg text-zinc-200 leading-snug">{paso.titulo}</h3>
-          <p class="text-sm text-zinc-500 leading-relaxed">{paso.texto}</p>
+        <div class={`animate-fade-up stagger-${i + 1} flex flex-col gap-4`}>
+          <span
+            class="font-display text-6xl font-800 leading-none"
+            style="color: var(--color-base-border);"
+          >
+            {paso.num}
+          </span>
+          <h3
+            class="font-display font-700 text-lg leading-snug"
+            style="color: var(--color-ink);"
+          >
+            {paso.titulo}
+          </h3>
+          <p
+            class="text-sm leading-relaxed"
+            style="color: var(--color-muted);"
+          >
+            {paso.texto}
+          </p>
         </div>
       ))}
     </div>
   </section>
 
+  <!-- ─── Separador ─────────────────────────────────────────────── -->
+  <div
+    class="border-t max-w-6xl mx-auto px-5"
+    style="border-color: var(--color-base-border);"
+  />
+
   <!-- ─── Acertijos destacados ──────────────────────────────────── -->
   {destacados.length > 0 && (
-    <section class="max-w-6xl mx-auto px-4 pb-20">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="font-serif text-3xl text-zinc-200">Destacados</h2>
-        <a href="/jugar" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1 group">
+    <section class="max-w-6xl mx-auto px-5 py-20">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <p
+            class="font-display text-xs font-600 tracking-[0.18em] uppercase mb-2"
+            style="color: var(--color-blood);"
+          >
+            Para empezar
+          </p>
+          <h2
+            class="font-display font-800 text-4xl"
+            style="color: var(--color-ink);"
+          >
+            Destacados
+          </h2>
+        </div>
+        <a
+          href="/jugar"
+          class="font-display text-sm font-500 flex items-center gap-1 transition-colors group"
+          style="color: var(--color-muted);"
+          onmouseover="this.style.color='var(--color-ink)'"
+          onmouseout="this.style.color='var(--color-muted)'"
+        >
           Ver todos
           <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>
         </a>
       </div>
+
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {destacados.map((acertijo, i) => (
           <AcertijoCard acertijo={acertijo} index={i} />
@@ -106,4 +194,5 @@ const destacados = acertijos.filter(a => a.data.destacado).slice(0, 3);
       </div>
     </section>
   )}
+
 </BaseLayout>
