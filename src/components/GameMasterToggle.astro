@@ -84,67 +84,70 @@ const { solucion } = Astro.props;
 </section>
 
 <script>
-  const overlay  = document.getElementById('gm-overlay');
-  const modal    = document.getElementById('gm-modal');
-  const backdrop = document.getElementById('gm-modal-backdrop');
-  const btnCancel  = document.getElementById('gm-cancel');
-  const btnConfirm = document.getElementById('gm-confirm');
+  function initGameMaster() {
+    const overlay    = document.getElementById('gm-overlay');
+    const modal      = document.getElementById('gm-modal');
+    const backdrop   = document.getElementById('gm-modal-backdrop');
+    const btnCancel  = document.getElementById('gm-cancel');
+    const btnConfirm = document.getElementById('gm-confirm');
 
-  let revelado = false;
+    // Si no están los elementos en este page, no hacer nada
+    if (!overlay || !modal) return;
 
-  function abrirModal() {
-    if (revelado) return;
-    modal?.classList.remove('hidden');
-    btnConfirm?.focus();
-  }
+    let revelado = false;
 
-  function cerrarModal() {
-    modal?.classList.add('hidden');
-  }
-
-  function revelarSolucion() {
-    cerrarModal();
-    revelado = true;
-
-    // Animar cortina hacia abajo con startViewTransition si está disponible
-    if (document.startViewTransition) {
-      document.startViewTransition(() => {
-        overlay?.classList.add('revealed');
-      });
-    } else {
-      overlay?.classList.add('revealed');
+    function abrirModal() {
+      if (revelado) return;
+      modal.classList.remove('hidden');
+      btnConfirm?.focus();
     }
 
-    // Ocultar completamente tras la animación para que sea accesible
-    setTimeout(() => {
-      overlay?.setAttribute('aria-hidden', 'true');
-      overlay?.setAttribute('tabindex', '-1');
-    }, 850);
+    function cerrarModal() {
+      modal.classList.add('hidden');
+    }
+
+    function revelarSolucion() {
+      cerrarModal();
+      revelado = true;
+
+      // Activar la animación de cortina (solo CSS, sin startViewTransition
+      // para no interferir con el router de Astro)
+      overlay.classList.add('revealed');
+
+      // Guardar en sessionStorage para restaurar si navegan y vuelven
+      sessionStorage.setItem(`gm-${window.location.pathname}`, 'revealed');
+
+      // Quitar del tab order y accesibilidad una vez animado
+      setTimeout(() => {
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.setAttribute('tabindex', '-1');
+        overlay.style.pointerEvents = 'none';
+      }, 850);
+    }
+
+    // Restaurar estado si ya se reveló en esta sesión
+    if (sessionStorage.getItem(`gm-${window.location.pathname}`) === 'revealed') {
+      revelado = true;
+      overlay.classList.add('revealed');
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('tabindex', '-1');
+      overlay.style.pointerEvents = 'none';
+    }
+
+    overlay.addEventListener('click', abrirModal);
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') abrirModal();
+    });
+
+    backdrop?.addEventListener('click', cerrarModal);
+    btnCancel?.addEventListener('click', cerrarModal);
+    btnConfirm?.addEventListener('click', revelarSolucion);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) cerrarModal();
+    });
   }
 
-  overlay?.addEventListener('click', abrirModal);
-  overlay?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') abrirModal();
-  });
-
-  backdrop?.addEventListener('click', cerrarModal);
-  btnCancel?.addEventListener('click', cerrarModal);
-  btnConfirm?.addEventListener('click', revelarSolucion);
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') cerrarModal();
-  });
-
-  // Guardar estado en sessionStorage por si el usuario navega
-  const key = `gm-${window.location.pathname}`;
-  if (sessionStorage.getItem(key) === 'revealed') {
-    revelado = true;
-    overlay?.classList.add('revealed');
-    overlay?.setAttribute('aria-hidden', 'true');
-    overlay?.setAttribute('tabindex', '-1');
-  }
-
-  btnConfirm?.addEventListener('click', () => {
-    sessionStorage.setItem(key, 'revealed');
-  });
+  // Se ejecuta en carga inicial Y tras cada navegación con View Transitions
+  document.addEventListener('astro:page-load', initGameMaster);
 </script>
