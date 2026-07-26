@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;0,6..96,900;1,6..96,700;1,6..96,900&family=Syne:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500&display=swap');
 @import "tailwindcss";
 
 /* ════════════════════════════════════════════════════════════════
@@ -52,9 +52,10 @@
   --cortito-muted:  #3a7850;
 
   /* Tipografías */
-  --f-display: 'Syne', system-ui, sans-serif;
-  --f-serif:   'Crimson Pro', Georgia, serif;
-  --f-sans:    'Inter', system-ui, sans-serif;
+  --f-headline: 'Bodoni Moda', Georgia, serif;   /* títulos grandes, logo */
+  --f-display:  'Syne', system-ui, sans-serif;   /* labels, badges, botones, UI */
+  --f-serif:    'Crimson Pro', Georgia, serif;   /* enunciados, cuerpo de texto */
+  --f-sans:     'Inter', system-ui, sans-serif;  /* texto pequeño UI */
 }
 
 /* Shorthand: el elemento con data-cat hereda estas vars */

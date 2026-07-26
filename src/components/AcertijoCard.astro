@@ -100,7 +100,7 @@ const preview = (() => {
     position: relative;
   }
   .card:hover {
-    box-shadow: 0 8px 32px color-mix(in srgb, var(--accent, var(--ink)) 12%, transparent);
+    box-shadow: 0 8px 28px rgba(0,0,0,.10);
     translate: 0 -3px;
   }
 
@@ -157,12 +157,13 @@ const preview = (() => {
   }
 
   .card__title {
-    font-family: var(--f-display);
-    font-weight: 800;
-    font-size: 1.125rem;
-    line-height: 1.2;
+    font-family: var(--f-headline);
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1.15;
     color: var(--tx, var(--ink));
     letter-spacing: -.01em;
+    font-optical-sizing: auto;
   }
 
   .card__preview {

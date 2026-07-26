@@ -103,12 +103,13 @@ const destacados = all.filter(a => a.data.destacado).slice(0, 3);
   .hero__text { display: flex; flex-direction: column; gap: 28px; }
 
   .hero__title {
-    font-family: var(--f-display);
-    font-weight: 800;
+    font-family: var(--f-headline);
+    font-weight: 900;
     font-size: clamp(3.5rem, 8vw, 7.5rem);
-    line-height: .9;
-    letter-spacing: -.03em;
+    line-height: .88;
+    letter-spacing: -.02em;
     color: var(--ink);
+    font-optical-sizing: auto;
   }
   .hero__red { color: var(--blood); }
 
@@ -171,14 +172,15 @@ const destacados = all.filter(a => a.data.destacado).slice(0, 3);
   }
 
   .section__h2 {
-    font-family: var(--f-display);
-    font-weight: 800;
+    font-family: var(--f-headline);
+    font-weight: 700;
     font-size: clamp(1.75rem, 4vw, 2.75rem);
     color: var(--ink);
-    letter-spacing: -.02em;
+    letter-spacing: -.01em;
     line-height: 1.1;
     margin-top: 10px;
     margin-bottom: 48px;
+    font-optical-sizing: auto;
   }
 
   .section__head {
