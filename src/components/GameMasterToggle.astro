@@ -1,0 +1,150 @@
+---
+interface Props {
+  solucion: string;
+}
+const { solucion } = Astro.props;
+---
+
+<section class="mt-10 relative">
+  <!-- Overlay cortina (cubre la solución) -->
+  <div
+    id="gm-overlay"
+    class="cortina-overlay absolute inset-0 z-10 rounded-xl flex items-center justify-center cursor-pointer group/overlay"
+    style="background: linear-gradient(135deg, #0f0000 0%, #1a0000 50%, #0f0000 100%);"
+    role="button"
+    tabindex="0"
+    aria-label="Revelar solución (solo para el Game Master)"
+  >
+    <!-- Contenido del overlay -->
+    <div class="text-center px-6 pointer-events-none">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full border border-red-900/50 bg-red-950/30 mb-4 group-hover/overlay:border-red-700/70 group-hover/overlay:bg-red-950/50 transition-all duration-300">
+        <svg class="w-7 h-7 text-red-700 group-hover/overlay:text-red-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="text-zinc-400 text-sm font-medium tracking-wide uppercase">Solución</p>
+      <p class="text-zinc-600 text-xs mt-1">Solo para el Game Master</p>
+      <div class="mt-4 px-4 py-2 rounded-lg border border-red-900/30 bg-red-950/20 group-hover/overlay:bg-red-950/40 transition-colors">
+        <span class="text-red-500 text-xs font-medium">Pulsa para revelar</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <div
+    id="gm-modal"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+  >
+    <!-- Backdrop -->
+    <div id="gm-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+
+    <!-- Card del modal -->
+    <div class="relative z-10 card-glass rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-zinc-800 animate-fade-up">
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-950/50 border border-red-900/50 mb-5">
+        <svg class="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </div>
+
+      <h3 class="text-zinc-100 text-lg font-semibold mb-2">¿Eres el Game Master?</h3>
+      <p class="text-zinc-500 text-sm leading-relaxed mb-6">
+        La solución quedará visible en pantalla. Asegúrate de que los demás jugadores no estén mirando.
+      </p>
+
+      <div class="flex gap-3">
+        <button
+          id="gm-cancel"
+          class="flex-1 py-2.5 rounded-lg border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 text-sm transition-all"
+        >
+          Cancelar
+        </button>
+        <button
+          id="gm-confirm"
+          class="flex-1 py-2.5 rounded-lg bg-red-700 hover:bg-red-600 text-white text-sm font-medium transition-all hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] active:scale-95"
+        >
+          Soy el Game Master
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Solución (debajo del overlay) -->
+  <div class="rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900/50 p-6 min-h-[120px]">
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-1 h-5 rounded-full bg-blood"></div>
+      <h3 class="text-sm font-medium text-zinc-400 uppercase tracking-wide">Solución</h3>
+    </div>
+    <p class="font-serif text-xl leading-relaxed text-zinc-200" id="solucion-texto">
+      {solucion}
+    </p>
+  </div>
+</section>
+
+<script>
+  const overlay  = document.getElementById('gm-overlay');
+  const modal    = document.getElementById('gm-modal');
+  const backdrop = document.getElementById('gm-modal-backdrop');
+  const btnCancel  = document.getElementById('gm-cancel');
+  const btnConfirm = document.getElementById('gm-confirm');
+
+  let revelado = false;
+
+  function abrirModal() {
+    if (revelado) return;
+    modal?.classList.remove('hidden');
+    btnConfirm?.focus();
+  }
+
+  function cerrarModal() {
+    modal?.classList.add('hidden');
+  }
+
+  function revelarSolucion() {
+    cerrarModal();
+    revelado = true;
+
+    // Animar cortina hacia abajo con startViewTransition si está disponible
+    if (document.startViewTransition) {
+      document.startViewTransition(() => {
+        overlay?.classList.add('revealed');
+      });
+    } else {
+      overlay?.classList.add('revealed');
+    }
+
+    // Ocultar completamente tras la animación para que sea accesible
+    setTimeout(() => {
+      overlay?.setAttribute('aria-hidden', 'true');
+      overlay?.setAttribute('tabindex', '-1');
+    }, 850);
+  }
+
+  overlay?.addEventListener('click', abrirModal);
+  overlay?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') abrirModal();
+  });
+
+  backdrop?.addEventListener('click', cerrarModal);
+  btnCancel?.addEventListener('click', cerrarModal);
+  btnConfirm?.addEventListener('click', revelarSolucion);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') cerrarModal();
+  });
+
+  // Guardar estado en sessionStorage por si el usuario navega
+  const key = `gm-${window.location.pathname}`;
+  if (sessionStorage.getItem(key) === 'revealed') {
+    revelado = true;
+    overlay?.classList.add('revealed');
+    overlay?.setAttribute('aria-hidden', 'true');
+    overlay?.setAttribute('tabindex', '-1');
+  }
+
+  btnConfirm?.addEventListener('click', () => {
+    sessionStorage.setItem(key, 'revealed');
+  });
+</script>

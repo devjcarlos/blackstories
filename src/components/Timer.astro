@@ -1,0 +1,126 @@
+---
+interface Props {
+  tiempoEstimado?: number; // minutos — para saber cuándo volverse rojo
+}
+const { tiempoEstimado = 15 } = Astro.props;
+---
+
+<div
+  id="timer-widget"
+  class="flex items-center gap-3 select-none"
+  data-limite={tiempoEstimado * 60}
+>
+  <!-- Display -->
+  <div class="relative">
+    <span
+      id="timer-display"
+      class="font-mono text-4xl font-semibold tabular-nums text-zinc-100 transition-colors duration-500"
+    >
+      00:00
+    </span>
+    <div
+      id="timer-urgency-ring"
+      class="absolute -inset-2 rounded-lg border-2 border-transparent transition-all duration-500 pointer-events-none"
+    />
+  </div>
+
+  <!-- Controles -->
+  <div class="flex items-center gap-2">
+    <button
+      id="timer-toggle"
+      aria-label="Iniciar/Pausar"
+      class="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+    >
+      <!-- Play icon -->
+      <svg id="icon-play" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7L8 5z"/>
+      </svg>
+      <!-- Pause icon (hidden initially) -->
+      <svg id="icon-pause" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+    </button>
+
+    <button
+      id="timer-reset"
+      aria-label="Reiniciar"
+      class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-500 hover:text-zinc-300 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+    >
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+        <path d="M3 3v5h5"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script define:vars={{ tiempoEstimado }}>
+  const limiteSegundos = tiempoEstimado * 60;
+
+  const display   = document.getElementById('timer-display');
+  const btnToggle = document.getElementById('timer-toggle');
+  const btnReset  = document.getElementById('timer-reset');
+  const iconPlay  = document.getElementById('icon-play');
+  const iconPause = document.getElementById('icon-pause');
+  const urgRing   = document.getElementById('timer-urgency-ring');
+
+  let segundos  = 0;
+  let corriendo = false;
+  let intervalo = null;
+
+  function formatear(s) {
+    const m = Math.floor(s / 60).toString().padStart(2, '0');
+    const seg = (s % 60).toString().padStart(2, '0');
+    return `${m}:${seg}`;
+  }
+
+  function actualizarUI() {
+    if (!display) return;
+    display.textContent = formatear(segundos);
+
+    const urgente = segundos >= limiteSegundos;
+
+    // Clases urgentes
+    display.classList.toggle('timer-urgent', urgente);
+    display.classList.toggle('text-zinc-100', !urgente);
+
+    // Anillo rojo cuando urge
+    if (urgRing) {
+      urgRing.classList.toggle('border-red-600/60', urgente);
+      urgRing.classList.toggle('shadow-[0_0_20px_rgba(220,38,38,0.3)]', urgente);
+    }
+  }
+
+  function toggleTimer() {
+    corriendo = !corriendo;
+
+    if (corriendo) {
+      intervalo = setInterval(() => {
+        segundos++;
+        actualizarUI();
+      }, 1000);
+      iconPlay?.classList.add('hidden');
+      iconPause?.classList.remove('hidden');
+    } else {
+      clearInterval(intervalo);
+      iconPlay?.classList.remove('hidden');
+      iconPause?.classList.add('hidden');
+    }
+  }
+
+  function resetTimer() {
+    corriendo = false;
+    clearInterval(intervalo);
+    segundos = 0;
+    actualizarUI();
+    iconPlay?.classList.remove('hidden');
+    iconPause?.classList.add('hidden');
+    urgRing?.classList.remove('border-red-600/60', 'shadow-[0_0_20px_rgba(220,38,38,0.3)]');
+  }
+
+  btnToggle?.addEventListener('click', toggleTimer);
+  btnReset?.addEventListener('click', resetTimer);
+
+  // Limpiar al navegar (View Transitions)
+  document.addEventListener('astro:before-preparation', resetTimer);
+</script>

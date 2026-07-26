@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AcertijoCard from '../components/AcertijoCard.astro';
+import { getCollection } from 'astro:content';
+
+const acertijos = await getCollection('acertijos');
+
+// Ordenar por dificultad por defecto
+const ordenados = acertijos.sort((a, b) => a.data.dificultad - b.data.dificultad);
+
+const categorias = [
+  { id: 'todos',     label: 'Todos' },
+  { id: 'clasico',   label: 'Clásico' },
+  { id: 'oscuro',    label: 'Oscuro' },
+  { id: 'humor',     label: 'Humor' },
+  { id: 'historico', label: 'Histórico' },
+  { id: 'cortito',   label: 'Cortito' },
+];
+
+// Aleatorio para el botón
+const randomSlug = acertijos[Math.floor(Math.random() * acertijos.length)]?.id;
+---
+
+<BaseLayout
+  title="Jugar — Historias Negras"
+  description="Explora todos los acertijos de situación y elige el tuyo."
+>
+  <div class="max-w-6xl mx-auto px-4 py-12">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+      <div>
+        <h1 class="font-serif text-4xl text-zinc-100 mb-2">Acertijos</h1>
+        <p class="text-zinc-500 text-sm">{acertijos.length} historias para descubrir</p>
+      </div>
+
+      <!-- Botón aleatorio -->
+      {randomSlug && (
+        <a
+          href={`/acertijos/${randomSlug}`}
+          id="btn-random"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-700 hover:border-zinc-500 bg-zinc-900/50 hover:bg-zinc-800/50 text-zinc-300 hover:text-white text-sm transition-all group"
+        >
+          <svg class="w-4 h-4 text-blood group-hover:rotate-180 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 3 21 3 21 8"/>
+            <line x1="4" y1="20" x2="21" y2="3"/>
+            <polyline points="21 16 21 21 16 21"/>
+            <line x1="4" y1="4" x2="21" y2="21"/>
+          </svg>
+          Acertijo aleatorio
+        </a>
+      )}
+    </div>
+
+    <!-- Filtros de categoría -->
+    <div class="flex flex-wrap gap-2 mb-8" role="group" aria-label="Filtrar por categoría">
+      {categorias.map(cat => (
+        <button
+          class="filtro-btn px-3 py-1.5 rounded-full text-sm border transition-all"
+          data-cat={cat.id}
+          aria-pressed={cat.id === 'todos' ? 'true' : 'false'}
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+
+    <!-- Grid de acertijos -->
+    <div id="acertijos-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {ordenados.map((acertijo, i) => (
+        <div data-categoria={acertijo.data.categoria} class="acertijo-item">
+          <AcertijoCard acertijo={acertijo} index={i} />
+        </div>
+      ))}
+    </div>
+
+    <!-- Estado vacío -->
+    <div id="empty-state" class="hidden text-center py-20">
+      <p class="font-serif text-2xl text-zinc-600 italic">Ningún acertijo en esta categoría… por ahora.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Estado activo de los filtros */
+  .filtro-btn[aria-pressed="false"] {
+    border-color: #3f3f46;
+    color: #a1a1aa;
+    background: transparent;
+  }
+  .filtro-btn[aria-pressed="true"] {
+    border-color: var(--color-blood);
+    color: var(--color-blood);
+    background: rgba(220, 38, 38, 0.08);
+  }
+  .filtro-btn:hover:not([aria-pressed="true"]) {
+    border-color: #71717a;
+    color: #e4e4e7;
+    background: rgba(39, 39, 42, 0.5);
+  }
+</style>
+
+<script>
+  const botones = document.querySelectorAll<HTMLButtonElement>('.filtro-btn');
+  const items   = document.querySelectorAll<HTMLElement>('.acertijo-item');
+  const empty   = document.getElementById('empty-state');
+  const btnRandom = document.getElementById('btn-random') as HTMLAnchorElement | null;
+
+  // Slugs de todos los acertijos para el botón random (filtrado)
+  const allSlugs = Array.from(items).map(el => {
+    const link = el.querySelector('a');
+    return link?.getAttribute('href') ?? '';
+  }).filter(Boolean);
+
+  function filtrar(categoria: string) {
+    let visibles = 0;
+
+    items.forEach(item => {
+      const cat = item.dataset.categoria;
+      const visible = categoria === 'todos' || cat === categoria;
+      item.style.display = visible ? '' : 'none';
+      if (visible) visibles++;
+    });
+
+    // Estado vacío
+    if (empty) empty.classList.toggle('hidden', visibles > 0);
+
+    // Actualizar botón aleatorio con los visibles
+    if (btnRandom) {
+      const slugsVisibles = Array.from(items)
+        .filter(el => el.style.display !== 'none')
+        .map(el => el.querySelector('a')?.getAttribute('href') ?? '')
+        .filter(Boolean);
+
+      if (slugsVisibles.length > 0) {
+        const random = slugsVisibles[Math.floor(Math.random() * slugsVisibles.length)];
+        btnRandom.href = random;
+      }
+    }
+  }
+
+  botones.forEach(btn => {
+    btn.addEventListener('click', () => {
+      botones.forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      filtrar(btn.dataset.cat ?? 'todos');
+    });
+  });
+</script>

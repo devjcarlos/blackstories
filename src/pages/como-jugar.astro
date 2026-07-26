@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Cómo jugar — Historias Negras"
+  description="Aprende las reglas del juego de acertijos de situación."
+>
+  <div class="max-w-2xl mx-auto px-4 py-16">
+
+    <div class="mb-12 text-center">
+      <h1 class="font-serif text-5xl text-zinc-100 mb-4">Cómo jugar</h1>
+      <p class="text-zinc-500 font-serif italic text-xl">Las reglas son simples. Las historias, no tanto.</p>
+    </div>
+
+    <div class="space-y-8">
+
+      <div class="card-glass rounded-xl p-6 border-l-2 border-blood">
+        <h2 class="font-serif text-2xl text-zinc-100 mb-3">El Game Master</h2>
+        <p class="text-zinc-400 leading-relaxed">
+          Uno del grupo ejerce de <strong class="text-zinc-200">Game Master</strong>. Él es el único que conoce
+          la solución al enigma. Lee el enunciado en voz alta y responde las preguntas del grupo.
+        </p>
+      </div>
+
+      <div class="card-glass rounded-xl p-6">
+        <h2 class="font-serif text-2xl text-zinc-100 mb-3">Las preguntas</h2>
+        <p class="text-zinc-400 leading-relaxed mb-4">
+          El resto del grupo hace preguntas al Game Master. Solo puede responder con:
+        </p>
+        <div class="grid grid-cols-3 gap-3">
+          {[
+            { resp: 'Sí', color: 'text-emerald-400 border-emerald-900/50 bg-emerald-950/20' },
+            { resp: 'No', color: 'text-red-400 border-red-900/50 bg-red-950/20' },
+            { resp: 'No es relevante', color: 'text-zinc-400 border-zinc-700/50 bg-zinc-900/30' },
+          ].map(({ resp, color }) => (
+            <div class={`rounded-lg border p-3 text-center font-semibold text-sm ${color}`}>
+              {resp}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="card-glass rounded-xl p-6">
+        <h2 class="font-serif text-2xl text-zinc-100 mb-3">La victoria</h2>
+        <p class="text-zinc-400 leading-relaxed">
+          Cuando alguien dice la historia correcta (o lo suficientemente aproximada), el Game Master
+          pulsa el botón de revelar y la historia completa aparece para todos. Sin trampa, sin cartón.
+        </p>
+      </div>
+
+      <div class="card-glass rounded-xl p-6">
+        <h2 class="font-serif text-2xl text-zinc-100 mb-3">El cronómetro</h2>
+        <p class="text-zinc-400 leading-relaxed">
+          Cada acertijo tiene un tiempo estimado. El cronómetro se vuelve rojo si lo superáis.
+          No es obligatorio, pero añade presión.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="mt-12 text-center">
+      <a
+        href="/jugar"
+        class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-blood hover:bg-red-500 text-white font-medium text-sm tracking-wide transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95"
+      >
+        Empezar a jugar
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,197 @@
+/* ─── Google Fonts (must come before other @imports) ───────────── */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+/* ─── Design tokens ────────────────────────────────────────────── */
+@theme {
+  --color-ink:       #09090b;
+  --color-ink-soft:  #18181b;
+  --color-border:    #27272a;
+  --color-muted:     #52525b;
+  --color-text:      #e4e4e7;
+  --color-text-soft: #a1a1aa;
+  --color-blood:     #dc2626;
+  --color-blood-dim: #7f1d1d;
+  --color-blood-glow:#ef4444;
+
+  --font-serif: 'Crimson Pro', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background-color: var(--color-ink);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.35;
+}
+
+/* ─── View Transitions ──────────────────────────────────────────── */
+@keyframes vt-slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes vt-slide-out-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-40px); }
+}
+@keyframes vt-slide-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes vt-slide-out-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(40px); }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Default page transition: crossfade */
+::view-transition-old(root) {
+  animation: 220ms ease-in vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 260ms ease-out vt-fade-in;
+}
+
+/* Navegación hacia la derecha (siguiente acertijo) */
+html.vt-next::view-transition-old(root) {
+  animation: 260ms ease-in vt-slide-out-left;
+}
+html.vt-next::view-transition-new(root) {
+  animation: 300ms ease-out vt-slide-in-right;
+}
+
+/* Navegación hacia la izquierda (anterior acertijo) */
+html.vt-prev::view-transition-old(root) {
+  animation: 260ms ease-in vt-slide-out-right;
+}
+html.vt-prev::view-transition-new(root) {
+  animation: 300ms ease-out vt-slide-in-left;
+}
+
+/* Imagen: morph hero (se anima con la API nativa) */
+::view-transition-group(hero-image) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+::view-transition-old(hero-image),
+::view-transition-new(hero-image) {
+  height: 100%;
+  overflow: clip;
+}
+
+/* Título: morph hero */
+::view-transition-group(hero-title) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Utilidades propias ────────────────────────────────────────── */
+.font-serif { font-family: var(--font-serif); }
+
+.text-blood    { color: var(--color-blood); }
+.bg-blood      { background-color: var(--color-blood); }
+.border-blood  { border-color: var(--color-blood); }
+
+/* Card glassmorphism */
+.card-glass {
+  background: rgba(24, 24, 27, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(39, 39, 42, 0.8);
+}
+
+/* Dificultad dots */
+.dificultad-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ─── Animaciones de entrada ─────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+/* Stagger para cards del grid */
+.stagger-1 { animation-delay: 60ms; }
+.stagger-2 { animation-delay: 120ms; }
+.stagger-3 { animation-delay: 180ms; }
+.stagger-4 { animation-delay: 240ms; }
+.stagger-5 { animation-delay: 300ms; }
+.stagger-6 { animation-delay: 360ms; }
+.stagger-7 { animation-delay: 420ms; }
+.stagger-8 { animation-delay: 480ms; }
+
+/* ─── Reveal cortina ─────────────────────────────────────────────── */
+@keyframes cortina-bajar {
+  from { clip-path: inset(0 0 0 0); }
+  to   { clip-path: inset(0 0 100% 0); }
+}
+
+.cortina-overlay {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 800ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.cortina-overlay.revealed {
+  clip-path: inset(0 0 100% 0);
+}
+
+/* ─── Timer ──────────────────────────────────────────────────────── */
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.timer-urgent {
+  animation: pulse-red 1s ease-in-out infinite;
+  color: var(--color-blood-glow);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-ink); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
+
+/* ─── Focus visible ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-blood);
+  outline-offset: 3px;
+  border-radius: 4px;
+}

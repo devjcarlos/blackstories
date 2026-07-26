@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AcertijoCard from '../components/AcertijoCard.astro';
+import { getCollection } from 'astro:content';
+
+const acertijos = await getCollection('acertijos');
+const destacados = acertijos.filter(a => a.data.destacado).slice(0, 3);
+---
+
+<BaseLayout>
+  <!-- ─── Hero ────────────────────────────────────────────────────── -->
+  <section class="relative min-h-[85dvh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+
+    <!-- Fondo: radial glow rojo muy sutil -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-red-950/30 blur-[120px]"></div>
+    </div>
+
+    <!-- Eyebrow -->
+    <p class="animate-fade-up text-xs font-medium tracking-[0.2em] uppercase text-zinc-500 mb-6">
+      El juego de fiesta de sí o no
+    </p>
+
+    <!-- Título principal -->
+    <h1 class="animate-fade-up stagger-1 font-serif text-6xl sm:text-7xl md:text-8xl font-semibold text-zinc-100 leading-[0.95] tracking-tight mb-6 max-w-3xl">
+      Historias<br/>
+      <span class="text-blood">Negras</span>
+    </h1>
+
+    <!-- Subtítulo -->
+    <p class="animate-fade-up stagger-2 font-serif text-xl text-zinc-400 max-w-xl leading-relaxed mb-10 italic">
+      Un enigma. Preguntas de sí o no. Y una historia que nadie esperaba.
+    </p>
+
+    <!-- CTAs -->
+    <div class="animate-fade-up stagger-3 flex flex-col sm:flex-row items-center gap-3">
+      <a
+        href="/jugar"
+        class="px-7 py-3.5 rounded-full bg-blood hover:bg-red-500 text-white font-medium text-sm tracking-wide transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95"
+      >
+        Empezar a jugar
+      </a>
+      <a
+        href="/como-jugar"
+        class="px-7 py-3.5 rounded-full border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-zinc-200 text-sm tracking-wide transition-all hover:bg-zinc-900"
+      >
+        Cómo funciona
+      </a>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="animate-fade-up stagger-4 absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-zinc-700">
+      <span class="text-xs tracking-widest uppercase">Ver acertijos</span>
+      <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─── Cómo funciona ─────────────────────────────────────────── -->
+  <section class="max-w-4xl mx-auto px-4 py-20">
+    <h2 class="font-serif text-3xl text-center text-zinc-200 mb-12">¿Cómo se juega?</h2>
+    <div class="grid sm:grid-cols-3 gap-8 text-center">
+      {[
+        {
+          numero: '01',
+          titulo: 'El Game Master lee el enigma',
+          texto: 'Solo él conoce la solución. El resto del grupo escucha el enunciado misterioso.',
+        },
+        {
+          numero: '02',
+          titulo: 'El grupo hace preguntas',
+          texto: 'Las únicas respuestas posibles son "sí", "no" o "no es relevante". Nada más.',
+        },
+        {
+          numero: '03',
+          titulo: 'Se revela la verdad',
+          texto: 'Cuando alguien adivina, el Game Master pulsa revelar y la historia completa aparece.',
+        },
+      ].map((paso, i) => (
+        <div class={`animate-fade-up stagger-${i + 1} flex flex-col items-center gap-4`}>
+          <span class="font-mono text-5xl font-bold text-blood/30">{paso.numero}</span>
+          <h3 class="font-serif text-lg text-zinc-200 leading-snug">{paso.titulo}</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">{paso.texto}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── Acertijos destacados ──────────────────────────────────── -->
+  {destacados.length > 0 && (
+    <section class="max-w-6xl mx-auto px-4 pb-20">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="font-serif text-3xl text-zinc-200">Destacados</h2>
+        <a href="/jugar" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1 group">
+          Ver todos
+          <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {destacados.map((acertijo, i) => (
+          <AcertijoCard acertijo={acertijo} index={i} />
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+interface Props {
+  nivel: number;
+  mostrarLabel?: boolean;
+}
+const { nivel, mostrarLabel = true } = Astro.props;
+
+const labels = ['', 'Muy fácil', 'Fácil', 'Medio', 'Difícil', 'Muy difícil'];
+---
+
+<div class="flex items-center gap-2">
+  <div class="flex items-center gap-1">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <span
+        class={`w-2 h-2 rounded-full transition-colors ${i < nivel ? 'bg-blood' : 'bg-zinc-700'}`}
+      />
+    ))}
+  </div>
+  {mostrarLabel && (
+    <span class="text-xs text-zinc-500">{labels[nivel]}</span>
+  )}
+</div>

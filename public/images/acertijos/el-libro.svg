@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#09090b"/>
+  <radialGradient id="bg2" cx="40%" cy="50%" r="55%">
+    <stop offset="0%" stop-color="#0f0808" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#09090b" stop-opacity="1"/>
+  </radialGradient>
+  <rect width="800" height="500" fill="url(#bg2)"/>
+
+  <!-- Libro abierto -->
+  <g opacity="0.22" stroke="#e4e4e7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Página izquierda -->
+    <path d="M280 160 L280 360 Q360 340 400 350 L400 150 Q360 140 280 160Z"/>
+    <!-- Página derecha -->
+    <path d="M520 160 L520 360 Q440 340 400 350 L400 150 Q440 140 520 160Z"/>
+    <!-- Lomo -->
+    <line x1="400" y1="150" x2="400" y2="350"/>
+    <!-- Líneas de texto - izquierda -->
+    <line x1="300" y1="190" x2="385" y2="185" opacity="0.5"/>
+    <line x1="300" y1="205" x2="385" y2="200" opacity="0.5"/>
+    <line x1="300" y1="220" x2="375" y2="215" opacity="0.5"/>
+    <line x1="300" y1="235" x2="385" y2="230" opacity="0.5"/>
+    <line x1="300" y1="250" x2="380" y2="245" opacity="0.5"/>
+    <!-- Braille dots - derecha (patrón) -->
+    <circle cx="430" cy="200" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="430" cy="215" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="445" cy="200" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="460" cy="207" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="460" cy="222" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="475" cy="200" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="475" cy="215" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="475" cy="230" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="490" cy="207" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="430" cy="245" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="445" cy="245" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="445" cy="260" r="3" fill="#e4e4e7" stroke="none"/>
+    <circle cx="460" cy="260" r="3" fill="#e4e4e7" stroke="none"/>
+  </g>
+
+  <!-- Mancha de sangre sutil -->
+  <ellipse cx="310" cy="320" rx="18" ry="8" fill="#dc2626" opacity="0.12" transform="rotate(-15 310 320)"/>
+
+  <text x="400" y="450" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#3f3f46" letter-spacing="4">HISTORIAS NEGRAS</text>
+</svg>
