@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;0,6..96,900;1,6..96,700;1,6..96,900&family=Syne:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Syne:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500&display=swap');
 @import "tailwindcss";
 
 /* ════════════════════════════════════════════════════════════════
@@ -52,7 +52,7 @@
   --cortito-muted:  #3a7850;
 
   /* Tipografías */
-  --f-headline: 'Bodoni Moda', Georgia, serif;   /* títulos grandes, logo */
+  --f-headline: 'Playfair Display', Georgia, serif; /* títulos grandes, logo */
   --f-display:  'Syne', system-ui, sans-serif;   /* labels, badges, botones, UI */
   --f-serif:    'Crimson Pro', Georgia, serif;   /* enunciados, cuerpo de texto */
   --f-sans:     'Inter', system-ui, sans-serif;  /* texto pequeño UI */
