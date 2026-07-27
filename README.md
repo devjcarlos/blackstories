@@ -1,46 +1,55 @@
 # Historias Negras
 
-Versión digital del juego de enigmas tipo **Black Stories**: acertijos absurdos, oscuros, surrealistas y cómicos para jugar en grupo respondiendo solo **sí o no**.
+Versión digital de los enigmas de deducción tipo *Black Stories*: alguien hace de
+Game Master y guarda en secreto la solución de un enigma absurdo; el resto del
+grupo la reconstruye haciendo solo preguntas de sí o no.
 
-## Cómo se juega
+## Stack
 
-1. Un jugador hace de **Game Master** y abre un enigma. Solo lee el enunciado, no la solución.
-2. El resto del grupo hace preguntas cerradas (sí/no).
-3. Cuando el grupo cree tenerlo, alguien narra la solución completa. Gana quien se acerque más.
+- [Astro 7](https://astro.build) — SSG, Content Collections con Zod, View Transitions (`ClientRouter`)
+- [Tailwind CSS v4](https://tailwindcss.com) — reset/utilidades base; el sistema de color y tipografía va por CSS custom properties propias (ver `src/styles/global.css`)
+- Fuentes autoalojadas vía `@fontsource` (Playfair Display, Syne, Crimson Pro, Inter)
+- PWA vía `@vite-pwa/astro` — offline básico, instalable en móvil
+- Adapter de despliegue: `@astrojs/vercel` (salida estática)
 
-## Stack técnico
-
-- **Astro 7** — SSG, View Transitions (ClientRouter), Content Collections con Zod
-- **Tailwind CSS v4** — utilidades base; sistema de color vía CSS custom properties nativas
-- **Tipografía**: Playfair Display (headlines) · Syne (labels) · Crimson Pro (texto de acertijos) · Inter (UI pequeña)
-- **PWA** vía `@vite-pwa/astro` — funciona offline, instalable en móvil
-- **Deploy** en Vercel (estático)
-
-## Cómo correr localmente
+## Desarrollo
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev       # http://localhost:4321
+pnpm check     # typecheck de Astro
+pnpm build     # build de producción en dist/ y .vercel/output
+pnpm preview   # sirve el build de producción
 ```
 
-Página de desarrollo en `http://localhost:4322`.
+## Contenido
 
-## Cómo desplegar
+Los acertijos viven en `src/content/acertijos/*.md`. El frontmatter sigue el
+schema de `src/content.config.ts`:
 
-```bash
-pnpm build
-pnpm preview  # o hacer deploy directo desde el repo en Vercel
+```yaml
+title: "Título del acertijo"
+dificultad: 1-5
+categoria: oscuro | surreal | humor | clasico | historico | cortito
+tiempoEstimado: minutos (número)
+imagen: ruta a la imagen (public/ o import de src/assets)
+tags: ["tag1", "tag2"]
+destacado: true | false
 ```
 
-## Generar ilustraciones
+El cuerpo del markdown lleva el enunciado, seguido del marcador
+`<!-- SOLUCIÓN -->`, y después el texto de la solución. `src/lib/acertijos.ts`
+se encarga de separar ambas partes y renderizarlas.
 
-Cada acertijo trae un placeholder por categoría. Para generar ilustraciones reales:
+Las ilustraciones reales todavía no existen: cada acertijo usa un placeholder
+por categoría en `public/images/acertijos/`. Los prompts de generación por
+acertijo están en `docs/prompts-ilustraciones.md`.
 
-1. Consulta `docs/prompts-ilustraciones.md` para el prompt de cada acertijo.
-2. Genera con tu herramienta de IA favorita.
-3. Deja el resultado en `public/images/acertijos/` con el mismo nombre que el placeholder.
+## Estructura de páginas
 
-Prompt base:
-> thick black curved line illustration, bold outlines, simple flat shapes,
-> modern editorial style, white background, no shading, clean and friendly,
-> [escena del acertijo]
+| Ruta | Descripción |
+| --- | --- |
+| `/` | Landing editorial |
+| `/jugar` | Grid de acertijos con filtro por categoría y botón aleatorio |
+| `/acertijos/[slug]` | Página de juego individual, con mecánica de revelar solución para el Game Master |
+| `/como-jugar` | Reglas del juego |

@@ -3,5 +3,5 @@
   <g fill="none" stroke="#1c1917" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,0)">
     <path d="M190 320 170 160l100 84 70-140 70 140 100-84-20 160Z"/>
   </g>
-  <text x="340" y="440" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#1c191799">ilustracion pendiente &middot; historico</text>
+  <text x="340" y="440" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#1c191799">ilustracion pendiente · historico</text>
 </svg>
