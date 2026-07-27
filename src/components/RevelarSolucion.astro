@@ -32,6 +32,20 @@ const { solucionHtml } = Astro.props;
     </div>
   </div>
 
+  <div class="panel panel-rompiendo" data-panel="rompiendo" hidden aria-hidden="true">
+    <div class="grieta-escena">
+      <svg class="grieta-mitad grieta-mitad--izq" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 4c-3.3 0-6 2.9-6 6.4 0 3.6 2.7 5.2 6 9.6 3.3-4.4 6-6 6-9.6C22 6.9 19.3 4 16 4Z" />
+        <path d="M11 22.5 8 28l8-3 8 3-3-5.5" />
+      </svg>
+      <svg class="grieta-mitad grieta-mitad--der" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 4c-3.3 0-6 2.9-6 6.4 0 3.6 2.7 5.2 6 9.6 3.3-4.4 6-6 6-9.6C22 6.9 19.3 4 16 4Z" />
+        <path d="M11 22.5 8 28l8-3 8 3-3-5.5" />
+      </svg>
+    </div>
+    <p class="panel-texto panel-texto--rompiendo">Rompiendo el sello…</p>
+  </div>
+
   <div class="panel panel-revelado" data-panel="revelado" hidden>
     <p class="kicker">La solución</p>
     <div class="solucion-texto" set:html={solucionHtml} />
@@ -42,6 +56,10 @@ const { solucionHtml } = Astro.props;
 </div>
 
 <script>
+  const SIN_MOVIMIENTO = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const DURACION_ROTURA = 520;
+
   function inicializarRevelar() {
     document.querySelectorAll<HTMLElement>("[data-revelar]").forEach((raiz) => {
       if (raiz.dataset.listo === "true") return;
@@ -50,8 +68,11 @@ const { solucionHtml } = Astro.props;
       const paneles = {
         oculto: raiz.querySelector<HTMLElement>('[data-panel="oculto"]')!,
         confirmar: raiz.querySelector<HTMLElement>('[data-panel="confirmar"]')!,
+        rompiendo: raiz.querySelector<HTMLElement>('[data-panel="rompiendo"]')!,
         revelado: raiz.querySelector<HTMLElement>('[data-panel="revelado"]')!,
       };
+
+      let temporizador: ReturnType<typeof setTimeout> | null = null;
 
       const mostrar = (estado: keyof typeof paneles) => {
         raiz.dataset.estado = estado;
@@ -62,8 +83,19 @@ const { solucionHtml } = Astro.props;
 
       raiz.querySelector('[data-accion="pedir-confirmacion"]')?.addEventListener("click", () => mostrar("confirmar"));
       raiz.querySelector('[data-accion="cancelar"]')?.addEventListener("click", () => mostrar("oculto"));
-      raiz.querySelector('[data-accion="confirmar"]')?.addEventListener("click", () => mostrar("revelado"));
-      raiz.querySelector('[data-accion="ocultar"]')?.addEventListener("click", () => mostrar("oculto"));
+      raiz.querySelector('[data-accion="ocultar"]')?.addEventListener("click", () => {
+        if (temporizador) clearTimeout(temporizador);
+        mostrar("oculto");
+      });
+
+      raiz.querySelector('[data-accion="confirmar"]')?.addEventListener("click", () => {
+        if (SIN_MOVIMIENTO()) {
+          mostrar("revelado");
+          return;
+        }
+        mostrar("rompiendo");
+        temporizador = setTimeout(() => mostrar("revelado"), DURACION_ROTURA);
+      });
     });
   }
 
@@ -79,6 +111,7 @@ const { solucionHtml } = Astro.props;
     padding: 2rem 1.6rem;
     text-align: center;
     margin-block: 2.5rem;
+    overflow: hidden;
   }
   .panel {
     display: flex;
@@ -96,6 +129,11 @@ const { solucionHtml } = Astro.props;
     font-family: var(--font-ui);
     font-size: 0.95rem;
     color: var(--color-tinta-suave);
+  }
+  .panel-texto--rompiendo {
+    font-weight: 600;
+    color: var(--acento-tinta);
+    letter-spacing: 0.02em;
   }
   .panel-botones {
     display: flex;
@@ -134,5 +172,76 @@ const { solucionHtml } = Astro.props;
   }
   .solucion-texto :global(p) {
     margin-bottom: 0.9rem;
+  }
+
+  /* --- Animación: sello rompiéndose --- */
+  .grieta-escena {
+    position: relative;
+    width: 3rem;
+    height: 3.6rem;
+    color: var(--acento);
+  }
+  .grieta-mitad {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .grieta-mitad--izq {
+    clip-path: polygon(0 0, 51% 0, 51% 100%, 0 100%);
+  }
+  .grieta-mitad--der {
+    clip-path: polygon(49% 0, 100% 0, 100% 100%, 49% 100%);
+  }
+
+  .panel-revelado {
+    animation: hn-desplegar-solucion 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-estado="rompiendo"] .grieta-mitad--izq {
+      animation: hn-romper-izq 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+    }
+    [data-estado="rompiendo"] .grieta-mitad--der {
+      animation: hn-romper-der 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .panel-revelado {
+      animation: none;
+    }
+  }
+
+  @keyframes hn-romper-izq {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-14px, 10px) rotate(-22deg);
+      opacity: 0;
+    }
+  }
+  @keyframes hn-romper-der {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(14px, 10px) rotate(22deg);
+      opacity: 0;
+    }
+  }
+  @keyframes hn-desplegar-solucion {
+    from {
+      opacity: 0;
+      transform: translateY(-16px) scaleY(0.96);
+      transform-origin: top center;
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
   }
 </style>

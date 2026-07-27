@@ -20,9 +20,14 @@ const { acertijo } = Astro.props;
 const { title, categoria, dificultad, tiempoEstimado, imagen, tags } = acertijo.data;
 const { enunciadoHtml, solucionHtml } = partirCuerpo(acertijo.body ?? "");
 
-const acertijos = await getCollection("acertijos");
+const acertijos = (await getCollection("acertijos")).sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
 const otros = acertijos.filter((a) => a.id !== acertijo.id);
 const siguiente = otros[Math.floor(Math.random() * otros.length)];
+const numeroExpediente = String(
+  acertijos.findIndex((a) => a.id === acertijo.id) + 1,
+).padStart(3, "0");
 ---
 
 <Layout title={title} categoria={categoria}>
@@ -48,7 +53,10 @@ const siguiente = otros[Math.floor(Math.random() * otros.length)];
       </div>
 
       <section class="enunciado" aria-label="Enunciado del enigma">
-        <p class="kicker">El enigma</p>
+        <div class="enunciado-etiqueta">
+          <span class="kicker">El enigma</span>
+          <span class="enunciado-numero">Expediente n.º {numeroExpediente}</span>
+        </div>
         <div class="enunciado-texto" set:html={enunciadoHtml} />
       </section>
 
@@ -149,27 +157,47 @@ const siguiente = otros[Math.floor(Math.random() * otros.length)];
   }
 
   .enunciado {
-    border-top: 2.5px solid var(--color-tinta);
-    border-bottom: 2.5px solid var(--color-tinta);
-    padding-block: 2.2rem;
+    position: relative;
+    margin-block: 2.5rem;
+    padding: 2.2rem 2.4rem 2.4rem 2.6rem;
+    background: var(--color-papel);
+    border: 2px solid var(--color-tinta);
+    border-left: 7px solid var(--acento);
+    border-radius: 4px 18px 18px 4px;
+    box-shadow: var(--sombra-tarjeta);
+  }
+  .enunciado-etiqueta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.3rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1.5px dashed var(--color-borde);
+  }
+  .enunciado-numero {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    color: var(--color-tinta-suave);
+    font-variant-numeric: tabular-nums;
   }
   .enunciado-texto {
     font-family: var(--font-relato);
-    font-size: 1.4rem;
-    line-height: 1.65;
-    font-style: italic;
+    font-size: 1.38rem;
+    line-height: 1.68;
+    color: var(--color-tinta);
   }
   .enunciado-texto :global(p) {
     margin-bottom: 1rem;
   }
-  .enunciado-texto :global(p)::before {
-    content: "“";
-    font-style: normal;
-    color: var(--acento);
-  }
-  .enunciado-texto :global(p:last-child)::after {
-    content: "”";
-    font-style: normal;
+  .enunciado-texto :global(p:first-of-type)::first-letter {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: 3.4rem;
+    line-height: 0.75;
+    float: left;
+    margin: 0.05em 0.08em 0 0;
     color: var(--acento);
   }
 
