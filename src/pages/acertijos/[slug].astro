@@ -191,14 +191,36 @@ const numeroExpediente = String(
   .enunciado-texto :global(p) {
     margin-bottom: 1rem;
   }
-  .enunciado-texto :global(p:first-of-type)::first-letter {
-    font-family: var(--font-headline);
-    font-weight: 900;
-    font-size: 3.4rem;
-    line-height: 0.75;
-    float: left;
-    margin: 0.05em 0.08em 0 0;
-    color: var(--acento);
+  @media (min-width: 560px) {
+    .enunciado-texto :global(p:first-of-type)::first-letter {
+      font-family: var(--font-headline);
+      font-weight: 900;
+      font-size: 3.4rem;
+      line-height: 0.75;
+      float: left;
+      margin: 0.05em 0.08em 0 0;
+      color: var(--acento);
+    }
+  }
+  @media (max-width: 559px) {
+    .enunciado-texto :global(p:first-of-type)::first-letter {
+      color: var(--acento);
+      font-weight: 700;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .enunciado {
+      padding: 1.5rem 1.3rem 1.7rem 1.4rem;
+      margin-block: 1.8rem;
+    }
+    .enunciado-texto {
+      font-size: 1.18rem;
+      line-height: 1.6;
+    }
+    .enunciado-numero {
+      font-size: 0.66rem;
+    }
   }
 
   .tags {

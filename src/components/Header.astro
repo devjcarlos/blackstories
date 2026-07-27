@@ -12,7 +12,10 @@ const esActiva = (ruta: string) =>
     </a>
     <nav class="nav" aria-label="Navegación principal">
       <a href="/jugar" class={esActiva("/jugar") ? "activo" : ""}>Jugar</a>
-      <a href="/como-jugar" class={esActiva("/como-jugar") ? "activo" : ""}>Cómo se juega</a>
+      <a href="/como-jugar" class={esActiva("/como-jugar") ? "activo" : ""}>
+        <span class="nav-completo">Cómo se juega</span>
+        <span class="nav-corto">Reglas</span>
+      </a>
     </nav>
   </div>
 </header>
@@ -81,5 +84,37 @@ const esActiva = (ruta: string) =>
   .nav a:hover::after,
   .nav a.activo::after {
     width: 100%;
+  }
+
+  .nav-corto {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .cabecera-interior {
+      flex-wrap: nowrap;
+      padding-block: 0.75rem;
+      gap: 0.5rem;
+    }
+    .marca-titulo {
+      font-size: 1.02rem;
+    }
+    .marca-lema {
+      display: none;
+    }
+    .nav {
+      gap: 1rem;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .nav-completo {
+      display: none;
+    }
+    .nav-corto {
+      display: inline;
+    }
   }
 </style>
