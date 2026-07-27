@@ -1,0 +1,138 @@
+---
+import Icono from "./Icono.astro";
+
+interface Props {
+  solucionHtml: string;
+}
+const { solucionHtml } = Astro.props;
+---
+
+<div class="revelar" data-revelar data-estado="oculto">
+  <div class="panel panel-oculto" data-panel="oculto">
+    <Icono nombre="sello" class="sello" />
+    <p class="panel-texto">
+      La solución está sellada. Solo debería verla quien hace de <strong>Game Master</strong>.
+    </p>
+    <button type="button" class="boton-revelar" data-accion="pedir-confirmacion">
+      Soy el Game Master, mostrar solución
+    </button>
+  </div>
+
+  <div class="panel panel-confirmar" data-panel="confirmar" hidden>
+    <Icono nombre="candado" class="sello" />
+    <p class="panel-texto">
+      ¿Seguro? Si los demás jugadores están mirando la pantalla, van a ver la
+      respuesta y se arruina la partida.
+    </p>
+    <div class="panel-botones">
+      <button type="button" class="boton-revelar" data-accion="confirmar">
+        Sí, solo yo estoy mirando
+      </button>
+      <button type="button" class="boton-cancelar" data-accion="cancelar">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="panel panel-revelado" data-panel="revelado" hidden>
+    <p class="kicker">La solución</p>
+    <div class="solucion-texto" set:html={solucionHtml} />
+    <button type="button" class="boton-ocultar" data-accion="ocultar">
+      Ocultar otra vez
+    </button>
+  </div>
+</div>
+
+<script>
+  function inicializarRevelar() {
+    document.querySelectorAll<HTMLElement>("[data-revelar]").forEach((raiz) => {
+      if (raiz.dataset.listo === "true") return;
+      raiz.dataset.listo = "true";
+
+      const paneles = {
+        oculto: raiz.querySelector<HTMLElement>('[data-panel="oculto"]')!,
+        confirmar: raiz.querySelector<HTMLElement>('[data-panel="confirmar"]')!,
+        revelado: raiz.querySelector<HTMLElement>('[data-panel="revelado"]')!,
+      };
+
+      const mostrar = (estado: keyof typeof paneles) => {
+        raiz.dataset.estado = estado;
+        Object.entries(paneles).forEach(([clave, el]) => {
+          el.hidden = clave !== estado;
+        });
+      };
+
+      raiz.querySelector('[data-accion="pedir-confirmacion"]')?.addEventListener("click", () => mostrar("confirmar"));
+      raiz.querySelector('[data-accion="cancelar"]')?.addEventListener("click", () => mostrar("oculto"));
+      raiz.querySelector('[data-accion="confirmar"]')?.addEventListener("click", () => mostrar("revelado"));
+      raiz.querySelector('[data-accion="ocultar"]')?.addEventListener("click", () => mostrar("oculto"));
+    });
+  }
+
+  inicializarRevelar();
+  document.addEventListener("astro:after-swap", inicializarRevelar);
+</script>
+
+<style>
+  .revelar {
+    border: 2.5px solid var(--color-tinta);
+    border-radius: var(--radio-tarjeta);
+    background: var(--acento-suave);
+    padding: 2rem 1.6rem;
+    text-align: center;
+    margin-block: 2.5rem;
+  }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .sello {
+    width: 2.4rem;
+    height: 2.4rem;
+    color: var(--acento);
+  }
+  .panel-texto {
+    max-width: 46ch;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--color-tinta-suave);
+  }
+  .panel-botones {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .boton-revelar,
+  .boton-cancelar,
+  .boton-ocultar {
+    font-family: var(--font-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    padding: 0.8rem 1.4rem;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 2.5px solid var(--color-tinta);
+  }
+  .boton-revelar {
+    background: var(--color-tinta);
+    color: var(--color-papel);
+  }
+  .boton-cancelar,
+  .boton-ocultar {
+    background: transparent;
+    color: var(--color-tinta);
+  }
+  .solucion-texto {
+    font-family: var(--font-relato);
+    font-size: 1.15rem;
+    line-height: 1.65;
+    max-width: 56ch;
+    text-align: left;
+  }
+  .solucion-texto :global(p) {
+    margin-bottom: 0.9rem;
+  }
+</style>

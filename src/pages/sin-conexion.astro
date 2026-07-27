@@ -1,0 +1,49 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icono from "../components/Icono.astro";
+---
+
+<Layout title="Sin conexión">
+  <main transition:name="pagina-contenido">
+    <section class="container caja-sin-conexion">
+      <Icono nombre="luna" class="icono-grande" />
+      <p class="kicker">Sin conexión</p>
+      <h1>Esto sí que es un misterio</h1>
+      <p class="texto">
+        No hay internet ahora mismo, pero los enigmas que ya visitaste en este
+        dispositivo siguen disponibles. Prueba a volver a
+        <a href="/jugar">la lista de enigmas</a>.
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .caja-sin-conexion {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.9rem;
+    padding-block: 4rem;
+  }
+  .icono-grande {
+    width: 3rem;
+    height: 3rem;
+    color: #5b3a6b;
+  }
+  h1 {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: 2rem;
+  }
+  .texto {
+    max-width: 40ch;
+    color: var(--color-tinta-suave);
+  }
+  .texto a {
+    color: var(--color-tinta);
+  }
+</style>

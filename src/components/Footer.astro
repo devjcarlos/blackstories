@@ -1,0 +1,42 @@
+---
+const anio = new Date().getFullYear();
+---
+
+<footer class="pie" transition:persist>
+  <div class="container pie-interior">
+    <p class="pie-marca">Historias Negras</p>
+    <p class="pie-nota">
+      Inspirado en el género de los "situation puzzles" &mdash; hecho para jugarse en voz alta,
+      entre amigos, sin pantallas de por medio salvo esta.
+    </p>
+    <p class="pie-copy">&copy; {anio} &middot; devjcarlos</p>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    border-top: 2px solid var(--color-tinta);
+    margin-top: 5rem;
+    padding-block: 2.5rem;
+  }
+  .pie-interior {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .pie-marca {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: 1.1rem;
+  }
+  .pie-nota {
+    max-width: 40ch;
+    font-size: 0.85rem;
+    color: var(--color-tinta-suave);
+  }
+  .pie-copy {
+    font-size: 0.75rem;
+    color: var(--color-tinta-suave);
+    margin-top: 0.75rem;
+  }
+</style>

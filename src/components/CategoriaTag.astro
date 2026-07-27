@@ -1,0 +1,38 @@
+---
+import Icono from "./Icono.astro";
+import { CATEGORIA_INFO } from "../lib/acertijos";
+
+interface Props {
+  categoria: keyof typeof CATEGORIA_INFO;
+  class?: string;
+}
+const { categoria, class: className = "" } = Astro.props;
+const info = CATEGORIA_INFO[categoria];
+---
+
+<span class={`etiqueta ${className}`} data-categoria={categoria}>
+  <Icono nombre={info.icono as any} class="icono" />
+  {info.label}
+</span>
+
+<style>
+  .etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.68rem;
+    color: var(--acento-tinta);
+    background: var(--acento-suave);
+    padding: 0.32rem 0.65rem 0.32rem 0.5rem;
+    border-radius: 999px;
+  }
+  .icono {
+    width: 1em;
+    height: 1em;
+    color: var(--acento);
+  }
+</style>

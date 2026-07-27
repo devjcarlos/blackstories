@@ -1,387 +1,202 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import GameMasterToggle from '../../components/GameMasterToggle.astro';
-import Timer from '../../components/Timer.astro';
-import { getCollection } from 'astro:content';
+import Layout from "../../layouts/Layout.astro";
+import CategoriaTag from "../../components/CategoriaTag.astro";
+import DificultadDots from "../../components/DificultadDots.astro";
+import Cronometro from "../../components/Cronometro.astro";
+import RevelarSolucion from "../../components/RevelarSolucion.astro";
+import Icono from "../../components/Icono.astro";
+import { getCollection } from "astro:content";
+import { partirCuerpo } from "../../lib/acertijos";
 
 export async function getStaticPaths() {
-  const all = await getCollection('acertijos');
-  return all.map((acertijo, index) => ({
+  const acertijos = await getCollection("acertijos");
+  return acertijos.map((acertijo) => ({
     params: { slug: acertijo.id },
-    props:  { acertijo, index, total: all.length, all },
+    props: { acertijo },
   }));
 }
 
-const { acertijo, index, total, all } = Astro.props;
-const { title, dificultad, categoria, tiempoEstimado, imagen } = acertijo.data;
-const slug = acertijo.id;
+const { acertijo } = Astro.props;
+const { title, categoria, dificultad, tiempoEstimado, imagen, tags } = acertijo.data;
+const { enunciadoHtml, solucionHtml } = partirCuerpo(acertijo.body ?? "");
 
-const partes    = acertijo.body.split('<!-- SOLUCIÓN -->');
-const enunciado = partes[0].trim();
-const solucion  = (partes[1] ?? '').trim();
-
-const prev = all[(index - 1 + total) % total];
-const next = all[(index + 1) % total];
-
-const labels: Record<string,string> = {
-  oscuro:'Oscuro', surreal:'Surreal', humor:'Humor',
-  clasico:'Clásico', historico:'Histórico', cortito:'Cortito',
-};
+const acertijos = await getCollection("acertijos");
+const otros = acertijos.filter((a) => a.id !== acertijo.id);
+const siguiente = otros[Math.floor(Math.random() * otros.length)];
 ---
 
-<BaseLayout title={`${title} — Historias Negras`} description={enunciado.slice(0,155)}>
+<Layout title={title} categoria={categoria}>
+  <main transition:name="pagina-contenido">
+    <article class="container juego">
+      <a href="/jugar" class="volver">
+        <Icono nombre="flecha" class="volver-icono" /> Volver a todos los enigmas
+      </a>
 
-  <article data-cat={categoria}>
-
-    <!-- ══ Banner de categoría ══════════════════════════════════ -->
-    <div class="banner">
-      <div class="banner__inner container">
-
-        <a href="/jugar" data-nav="back" class="back-link">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
-          </svg>
-          Todos los acertijos
-        </a>
-
-        <span class="banner__badge">{labels[categoria]}</span>
-
-        <h1
-          class="banner__title"
-          style={`view-transition-name: title-${slug}`}
-        >{title}</h1>
-
-        <!-- Meta -->
-        <div class="banner__meta">
-          <div class="dots-row" aria-label={`Dificultad ${dificultad}/5`}>
-            <span class="meta-label">Dif.</span>
-            {Array.from({length:5}).map((_,i) => (
-              <span class={`dot ${i < dificultad ? 'dot--on' : 'dot--off'}`}/>
-            ))}
+      <div class="juego-cabecera">
+        <div class="juego-imagen" transition:name={`imagen-${acertijo.id}`}>
+          <img src={imagen} alt="" width="640" height="480" />
+        </div>
+        <div class="juego-info">
+          <CategoriaTag categoria={categoria} />
+          <h1 class="juego-titulo" transition:name={`titulo-${acertijo.id}`}>{title}</h1>
+          <div class="juego-meta">
+            <span class="meta-item"><Icono nombre="reloj" class="meta-icono" />{tiempoEstimado} min estimados</span>
+            <DificultadDots dificultad={dificultad} />
           </div>
-          <div class="meta-time">
-            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
-              <path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            ~{tiempoEstimado} min
-          </div>
+          <Cronometro />
         </div>
       </div>
-    </div>
 
-    <!-- ══ Imagen (morph desde la card) ═════════════════════════ -->
-    {imagen && (
-      <div class="hero-img-wrap container">
-        <img
-          src={imagen}
-          alt={title}
-          class="hero-img"
-          style={`view-transition-name: img-${slug}`}
-        />
-      </div>
-    )}
+      <section class="enunciado" aria-label="Enunciado del enigma">
+        <p class="kicker">El enigma</p>
+        <div class="enunciado-texto" set:html={enunciadoHtml} />
+      </section>
 
-    <!-- ══ Contenido ═════════════════════════════════════════════ -->
-    <div class="content container">
+      <RevelarSolucion solucionHtml={solucionHtml} />
 
-      <!-- Enunciado -->
-      <div class="enigma">
-        <p class="enigma__label">El enigma</p>
-        <p class="enigma__text">{enunciado}</p>
-      </div>
+      {tags.length > 0 && (
+        <ul class="tags">
+          {tags.map((t: string) => <li>#{t}</li>)}
+        </ul>
+      )}
 
-      <!-- Timer -->
-      <div class="timer-wrap">
-        <div>
-          <p class="widget-label">Cronómetro</p>
-          <p class="widget-sub">Se activa en rojo a los {tiempoEstimado} min</p>
-        </div>
-        <Timer tiempoEstimado={tiempoEstimado} />
-      </div>
-
-      <!-- Solución -->
-      {solucion
-        ? <GameMasterToggle solucion={solucion} categoria={categoria} />
-        : <p class="no-solution">Solución no disponible.</p>
-      }
-
-      <!-- Navegación -->
-      <nav class="nav-cards">
-        <a href={`/acertijos/${prev.id}`} data-nav="prev" class="nav-btn nav-btn--prev">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
-          </svg>
-          <div>
-            <span class="nav-btn__label">Anterior</span>
-            <span class="nav-btn__name">{prev.data.title}</span>
-          </div>
+      {siguiente && (
+        <a href={`/acertijos/${siguiente.id}/`} class="siguiente">
+          <span class="kicker">Siguiente</span>
+          <span class="siguiente-titulo">{siguiente.data.title} →</span>
         </a>
-
-        <span class="nav-count">{index + 1} / {total}</span>
-
-        <a href={`/acertijos/${next.id}`} data-nav="next" class="nav-btn nav-btn--next">
-          <div>
-            <span class="nav-btn__label">Siguiente</span>
-            <span class="nav-btn__name">{next.data.title}</span>
-          </div>
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
-          </svg>
-        </a>
-      </nav>
-
-    </div>
-  </article>
-
-</BaseLayout>
+      )}
+    </article>
+  </main>
+</Layout>
 
 <style>
-  /* ── Banner ───────────────────────────────────────────────── */
-  .banner {
-    background: var(--bg, var(--cream-2));
-    border-bottom: 1.5px solid var(--border, var(--cream-border));
+  .juego {
+    padding-block: 2.5rem 5rem;
+    max-width: 52rem;
   }
-
-  .banner__inner {
-    padding-top: 48px;
-    padding-bottom: 48px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .back-link {
+  .volver {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-family: var(--f-sans);
-    font-size: .875rem;
-    font-weight: 500;
-    color: var(--mu, var(--muted));
+    gap: 0.4rem;
+    font-family: var(--font-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
     text-decoration: none;
-    transition: opacity .15s;
-    width: fit-content;
+    color: var(--color-tinta-suave);
+    margin-bottom: 2rem;
   }
-  .back-link:hover { opacity: .6; }
-  .back-link svg { transition: translate .15s; }
-  .back-link:hover svg { translate: -3px 0; }
-
-  .banner__badge {
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .6875rem;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 99px;
-    background: var(--accent, var(--ink));
-    color: #fff;
-    width: fit-content;
+  .volver-icono {
+    transform: rotate(180deg);
+    width: 1em;
+    height: 1em;
   }
 
-  .banner__title {
-    font-family: var(--f-headline);
-    font-weight: 700;
-    font-size: clamp(2.25rem, 6vw, 4rem);
-    line-height: .95;
-    letter-spacing: -.01em;
-    color: var(--tx, var(--ink));
-    
+  .juego-cabecera {
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: 1fr;
+    margin-bottom: 2.5rem;
   }
-
-  .banner__meta {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
+  @media (min-width: 720px) {
+    .juego-cabecera {
+      grid-template-columns: 0.85fr 1.15fr;
+      align-items: center;
+    }
   }
-
-  .dots-row { display: flex; align-items: center; gap: 5px; }
-  .meta-label {
-    font-family: var(--f-display);
-    font-size: .75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    color: var(--mu, var(--muted));
-    margin-right: 2px;
+  .juego-imagen {
+    border: 2.5px solid var(--color-tinta);
+    border-radius: var(--radio-tarjeta);
+    overflow: hidden;
+    background: var(--acento-suave);
+    aspect-ratio: 4 / 3;
   }
-
-  .dot { width: 8px; height: 8px; border-radius: 2px; }
-  .dot--on  { background: var(--accent, var(--ink)); }
-  .dot--off { background: var(--border, var(--cream-border)); }
-
-  .meta-time {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--f-display);
-    font-size: .8125rem;
-    font-weight: 700;
-    color: var(--mu, var(--muted));
-  }
-
-  /* ── Imagen hero ──────────────────────────────────────────── */
-  .hero-img-wrap {
-    margin-top: -1px;
-  }
-
-  .hero-img {
+  .juego-imagen img {
     width: 100%;
-    max-height: 380px;
+    height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 0 0 20px 20px;
-    border: 1.5px solid var(--cream-border);
-    border-top: none;
   }
-
-  /* ── Contenido ────────────────────────────────────────────── */
-  .content {
-    padding-top: 48px;
-    padding-bottom: 80px;
+  .juego-info {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 720px;
+    gap: 0.9rem;
+    align-items: flex-start;
+  }
+  .juego-titulo {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    line-height: 1.1;
+  }
+  .juego-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-size: 0.85rem;
+    color: var(--color-tinta-suave);
+  }
+  .meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .meta-icono {
+    width: 1em;
+    height: 1em;
   }
 
-  /* Enigma */
-  .enigma {
-    border-radius: 16px;
-    padding: 28px 32px;
-    background: var(--cream-2);
-    border: 1.5px solid var(--cream-border);
-    border-left: 4px solid var(--blood);
+  .enunciado {
+    border-top: 2.5px solid var(--color-tinta);
+    border-bottom: 2.5px solid var(--color-tinta);
+    padding-block: 2.2rem;
   }
-
-  .enigma__label {
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .75rem;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--blood);
-    margin-bottom: 14px;
-  }
-
-  .enigma__text {
-    font-family: var(--f-serif);
-    font-size: 1.35rem;
+  .enunciado-texto {
+    font-family: var(--font-relato);
+    font-size: 1.4rem;
     line-height: 1.65;
-    color: var(--ink);
-  }
-
-  /* Timer */
-  .timer-wrap {
-    border-radius: 14px;
-    padding: 20px 24px;
-    background: var(--cream-2);
-    border: 1.5px solid var(--cream-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .widget-label {
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .75rem;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-
-  .widget-sub {
-    font-size: .8125rem;
-    color: var(--cream-border);
-  }
-
-  /* Nav entre acertijos */
-  .nav-cards {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding-top: 24px;
-    border-top: 1px solid var(--cream-border);
-    margin-top: 8px;
-  }
-
-  .nav-count {
-    font-family: var(--f-display);
-    font-size: .8125rem;
-    font-weight: 700;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .nav-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    border-radius: 14px;
-    border: 1.5px solid var(--cream-border);
-    background: transparent;
-    text-decoration: none;
-    transition: border-color .15s, background .15s;
-    max-width: 200px;
-  }
-  .nav-btn:hover {
-    border-color: var(--ink-2);
-    background: var(--cream-2);
-  }
-  .nav-btn svg { flex-shrink: 0; color: var(--muted); }
-
-  .nav-btn__label {
-    display: block;
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .6875rem;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .nav-btn__name {
-    display: block;
-    font-family: var(--f-display);
-    font-weight: 800;
-    font-size: .875rem;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 140px;
-  }
-
-  .nav-btn--next { flex-direction: row-reverse; text-align: right; }
-
-  .no-solution {
     font-style: italic;
-    color: var(--muted);
-    font-size: .9rem;
+  }
+  .enunciado-texto :global(p) {
+    margin-bottom: 1rem;
+  }
+  .enunciado-texto :global(p)::before {
+    content: "“";
+    font-style: normal;
+    color: var(--acento);
+  }
+  .enunciado-texto :global(p:last-child)::after {
+    content: "”";
+    font-style: normal;
+    color: var(--acento);
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    list-style: none;
+    margin-top: 2rem;
+    font-size: 0.78rem;
+    color: var(--color-tinta-suave);
+    font-family: var(--font-ui);
+  }
+
+  .siguiente {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px dashed var(--color-borde);
+    text-decoration: none;
+    color: var(--color-tinta);
+  }
+  .siguiente-titulo {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: 1.4rem;
   }
 </style>
-
-<script>
-  function init() {
-    document.querySelectorAll<HTMLAnchorElement>('[data-nav]').forEach(link => {
-      link.addEventListener('click', () => {
-        const nav = link.dataset.nav;
-        document.documentElement.classList.remove('vt-next','vt-prev');
-        if (nav === 'next') document.documentElement.classList.add('vt-next');
-        if (nav === 'prev') document.documentElement.classList.add('vt-prev');
-      });
-    });
-  }
-  document.addEventListener('astro:page-load', init);
-  document.addEventListener('astro:after-preparation', () => {
-    document.documentElement.classList.remove('vt-next','vt-prev');
-  });
-</script>

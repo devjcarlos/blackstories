@@ -1,0 +1,115 @@
+---
+import Icono from "./Icono.astro";
+---
+
+<div class="cronometro" data-cronometro data-corriendo="false" data-segundos="0">
+  <span class="cronometro-tiempo" data-pantalla>00:00</span>
+  <div class="cronometro-botones">
+    <button type="button" data-accion="alternar" class="cronometro-boton">
+      <span data-etiqueta-alternar>Empezar</span>
+    </button>
+    <button type="button" data-accion="reiniciar" class="cronometro-boton cronometro-boton--fantasma" aria-label="Reiniciar cronómetro">
+      <Icono nombre="reloj" />
+    </button>
+  </div>
+</div>
+
+<script>
+  function inicializarCronometros() {
+    document.querySelectorAll<HTMLElement>("[data-cronometro]").forEach((raiz) => {
+      if (raiz.dataset.listo === "true") return;
+      raiz.dataset.listo = "true";
+
+      const pantalla = raiz.querySelector<HTMLElement>("[data-pantalla]")!;
+      const etiqueta = raiz.querySelector<HTMLElement>("[data-etiqueta-alternar]")!;
+      let segundos = 0;
+      let intervalo: ReturnType<typeof setInterval> | null = null;
+
+      const formatear = (s: number) => {
+        const m = Math.floor(s / 60).toString().padStart(2, "0");
+        const ss = (s % 60).toString().padStart(2, "0");
+        return `${m}:${ss}`;
+      };
+
+      const refrescar = () => {
+        pantalla.textContent = formatear(segundos);
+      };
+
+      raiz.querySelector('[data-accion="alternar"]')?.addEventListener("click", () => {
+        const corriendo = raiz.dataset.corriendo === "true";
+        if (corriendo) {
+          if (intervalo) clearInterval(intervalo);
+          intervalo = null;
+          raiz.dataset.corriendo = "false";
+          etiqueta.textContent = "Continuar";
+        } else {
+          intervalo = setInterval(() => {
+            segundos++;
+            refrescar();
+          }, 1000);
+          raiz.dataset.corriendo = "true";
+          etiqueta.textContent = "Pausar";
+        }
+      });
+
+      raiz.querySelector('[data-accion="reiniciar"]')?.addEventListener("click", () => {
+        segundos = 0;
+        refrescar();
+        if (intervalo) clearInterval(intervalo);
+        intervalo = null;
+        raiz.dataset.corriendo = "false";
+        etiqueta.textContent = "Empezar";
+      });
+    });
+  }
+
+  inicializarCronometros();
+  document.addEventListener("astro:after-swap", inicializarCronometros);
+</script>
+
+<style>
+  .cronometro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    border: 2.5px solid var(--color-tinta);
+    border-radius: 999px;
+    padding: 0.5rem 0.6rem 0.5rem 1.1rem;
+    background: var(--color-papel);
+  }
+  .cronometro-tiempo {
+    font-family: var(--font-label);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+    min-width: 3.2rem;
+  }
+  .cronometro-botones {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .cronometro-boton {
+    font-family: var(--font-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--color-tinta);
+    color: var(--color-papel);
+    cursor: pointer;
+  }
+  .cronometro-boton--fantasma {
+    background: transparent;
+    color: var(--color-tinta);
+    padding: 0.45rem 0.55rem;
+    display: inline-flex;
+  }
+  .cronometro-boton--fantasma :global(svg) {
+    width: 1.1em;
+    height: 1.1em;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 480" role="img" aria-label="Ilustracion pendiente para la categoria humor">
+  <rect width="100%" height="100%" fill="#f7e6c2"/>
+  <g fill="none" stroke="#1c1917" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,0)">
+    <path d="M180 200c40-56 100-84 160-84s120 28 160 84c0 108-70 188-160 188s-160-80-160-188Z"/><path d="M260 224v22M420 224v22"/><path d="M280 320c18 14 38 14 60 14s42 0 60-14"/>
+  </g>
+  <text x="340" y="440" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#1c191799">ilustracion pendiente &middot; humor</text>
+</svg>

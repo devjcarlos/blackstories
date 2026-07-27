@@ -1,43 +1,46 @@
-# Astro Starter Kit: Minimal
+# Historias Negras
 
-```sh
-npm create astro@latest -- --template minimal
+Versión digital del juego de enigmas tipo **Black Stories**: acertijos absurdos, oscuros, surrealistas y cómicos para jugar en grupo respondiendo solo **sí o no**.
+
+## Cómo se juega
+
+1. Un jugador hace de **Game Master** y abre un enigma. Solo lee el enunciado, no la solución.
+2. El resto del grupo hace preguntas cerradas (sí/no).
+3. Cuando el grupo cree tenerlo, alguien narra la solución completa. Gana quien se acerque más.
+
+## Stack técnico
+
+- **Astro 7** — SSG, View Transitions (ClientRouter), Content Collections con Zod
+- **Tailwind CSS v4** — utilidades base; sistema de color vía CSS custom properties nativas
+- **Tipografía**: Playfair Display (headlines) · Syne (labels) · Crimson Pro (texto de acertijos) · Inter (UI pequeña)
+- **PWA** vía `@vite-pwa/astro` — funciona offline, instalable en móvil
+- **Deploy** en Vercel (estático)
+
+## Cómo correr localmente
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Página de desarrollo en `http://localhost:4322`.
 
-## 🚀 Project Structure
+## Cómo desplegar
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+pnpm build
+pnpm preview  # o hacer deploy directo desde el repo en Vercel
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Generar ilustraciones
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Cada acertijo trae un placeholder por categoría. Para generar ilustraciones reales:
 
-Any static assets, like images, can be placed in the `public/` directory.
+1. Consulta `docs/prompts-ilustraciones.md` para el prompt de cada acertijo.
+2. Genera con tu herramienta de IA favorita.
+3. Deja el resultado en `public/images/acertijos/` con el mismo nombre que el placeholder.
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Prompt base:
+> thick black curved line illustration, bold outlines, simple flat shapes,
+> modern editorial style, white background, no shading, clean and friendly,
+> [escena del acertijo]

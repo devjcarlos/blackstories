@@ -1,216 +1,177 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import AcertijoCard from '../components/AcertijoCard.astro';
-import { getCollection } from 'astro:content';
+import Layout from "../layouts/Layout.astro";
+import AcertijoCard from "../components/AcertijoCard.astro";
+import Icono from "../components/Icono.astro";
+import { getCollection } from "astro:content";
+import { CATEGORIA_INFO } from "../lib/acertijos";
 
-const all      = await getCollection('acertijos');
-const ordenados = all.sort((a, b) => a.data.dificultad - b.data.dificultad);
-const random   = all[Math.floor(Math.random() * all.length)]?.id;
-
-const cats = [
-  { id: 'todos',     label: 'Todos' },
-  { id: 'oscuro',    label: 'Oscuro' },
-  { id: 'surreal',   label: 'Surreal' },
-  { id: 'humor',     label: 'Humor' },
-  { id: 'clasico',   label: 'Clásico' },
-  { id: 'historico', label: 'Histórico' },
-  { id: 'cortito',   label: 'Cortito' },
-];
+const acertijos = (await getCollection("acertijos")).sort(
+  (a, b) => a.data.title.localeCompare(b.data.title),
+);
+const categorias = Object.entries(CATEGORIA_INFO);
 ---
 
-<BaseLayout title="Jugar — Historias Negras">
-  <div class="page container">
-
-    <!-- Cabecera -->
-    <header class="page-head">
-      <div>
-        <p class="eyebrow">{all.length} historias disponibles</p>
-        <h1 class="page-title">Acertijos</h1>
-      </div>
-      {random && (
-        <a href={`/acertijos/${random}`} id="btn-random" class="btn-random">
-          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <polyline points="16 3 21 3 21 8"/>
-            <line x1="4" y1="20" x2="21" y2="3"/>
-            <polyline points="21 16 21 21 16 21"/>
-            <line x1="4" y1="4" x2="21" y2="21"/>
-          </svg>
-          Aleatorio
-        </a>
-      )}
-    </header>
-
-    <!-- Filtros -->
-    <div class="filters" role="group" aria-label="Filtrar por categoría">
-      {cats.map(c => (
-        <button
-          class="filter-pill"
-          data-cat={c.id}
-          aria-pressed={c.id === 'todos' ? 'true' : 'false'}
-        >
-          {c.label}
+<Layout title="Elige un enigma">
+  <main transition:name="pagina-contenido">
+    <section class="container cabecera-jugar">
+      <p class="kicker">{acertijos.length} enigmas y subiendo</p>
+      <div class="cabecera-jugar-fila">
+        <h1 class="titulo-jugar">Elige tu próximo enigma</h1>
+        <button type="button" id="boton-aleatorio" class="boton-aleatorio">
+          <Icono nombre="dado" />
+          Sorpréndeme
         </button>
-      ))}
-    </div>
+      </div>
 
-    <!-- Grid -->
-    <div id="grid" class="grid">
-      {ordenados.map((a, i) => (
-        <div class="grid-item" data-categoria={a.data.categoria}>
-          <AcertijoCard acertijo={a} index={i} />
-        </div>
-      ))}
-    </div>
+      <div class="filtros" role="group" aria-label="Filtrar por categoría">
+        <button type="button" class="chip activo" data-filtro="todas">Todas</button>
+        {
+          categorias.map(([clave, info]) => (
+            <button type="button" class="chip" data-filtro={clave} data-categoria={clave}>
+              <Icono nombre={info.icono as any} class="chip-icono" />
+              {info.label}
+            </button>
+          ))
+        }
+      </div>
+    </section>
 
-    <!-- Empty state -->
-    <p id="empty" class="empty hidden">
-      Ningún acertijo en esta categoría… por ahora.
-    </p>
-
-  </div>
-</BaseLayout>
-
-<style>
-  .page { padding-top: 56px; padding-bottom: 80px; }
-
-  /* Cabecera */
-  .page-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 36px;
-  }
-
-  .eyebrow {
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .75rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: var(--blood);
-    margin-bottom: 6px;
-  }
-
-  .page-title {
-    font-family: var(--f-headline);
-    font-weight: 700;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    color: var(--ink);
-    letter-spacing: -.01em;
-    
-    line-height: 1;
-  }
-
-  /* Botón aleatorio */
-  .btn-random {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 99px;
-    border: 1.5px solid var(--cream-border);
-    background: transparent;
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .8125rem;
-    color: var(--ink-2);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: border-color .15s, color .15s, background .15s;
-  }
-  .btn-random:hover {
-    border-color: var(--ink);
-    color: var(--ink);
-    background: var(--cream-2);
-  }
-  .btn-random svg { color: var(--blood); transition: rotate .4s; }
-  .btn-random:hover svg { rotate: 180deg; }
-
-  /* Filtros */
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 40px;
-  }
-
-  .filter-pill {
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .8125rem;
-    padding: 7px 16px;
-    border-radius: 99px;
-    border: 1.5px solid var(--cream-border);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all .15s;
-  }
-  .filter-pill:hover {
-    border-color: var(--ink-2);
-    color: var(--ink-2);
-    background: var(--cream-2);
-  }
-  .filter-pill[aria-pressed="true"] {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--cream);
-  }
-
-  /* Grid */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2,1fr); } }
-  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
-
-  .grid-item { display: flex; flex-direction: column; }
-
-  /* Empty */
-  .empty {
-    text-align: center;
-    padding: 80px 0;
-    font-family: var(--f-serif);
-    font-style: italic;
-    font-size: 1.5rem;
-    color: var(--muted);
-  }
-  .hidden { display: none; }
-</style>
+    <section class="container">
+      <div class="grid-acertijos" id="grid-acertijos">
+        {
+          acertijos.map((acertijo) => (
+            <div class="celda" data-categoria-item={acertijo.data.categoria}>
+              <AcertijoCard acertijo={acertijo} />
+            </div>
+          ))
+        }
+      </div>
+      <p id="sin-resultados" class="sin-resultados" hidden>
+        No hay enigmas en esta categoría todavía. Vuelve pronto.
+      </p>
+    </section>
+  </main>
+</Layout>
 
 <script>
-  function init() {
-    const pills   = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
-    const items   = document.querySelectorAll<HTMLElement>('.grid-item');
-    const empty   = document.getElementById('empty');
-    const btnRnd  = document.getElementById('btn-random') as HTMLAnchorElement | null;
+  const slugs = Array.from(
+    document.querySelectorAll<HTMLElement>("#grid-acertijos .celda"),
+  ).map((celda) => celda.querySelector("a")?.getAttribute("href")).filter(Boolean) as string[];
 
-    function filter(cat: string) {
-      let n = 0;
-      const visible: string[] = [];
-      items.forEach(el => {
-        const show = cat === 'todos' || el.dataset.categoria === cat;
-        el.style.display = show ? '' : 'none';
-        if (show) {
-          n++;
-          const href = el.querySelector('a')?.getAttribute('href');
-          if (href) visible.push(href);
-        }
+  function inicializarFiltros() {
+    const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
+    const celdas = document.querySelectorAll<HTMLElement>("#grid-acertijos .celda");
+    const sinResultados = document.getElementById("sin-resultados");
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        chips.forEach((c) => c.classList.remove("activo"));
+        chip.classList.add("activo");
+        const filtro = chip.dataset.filtro;
+        let visibles = 0;
+        celdas.forEach((celda) => {
+          const coincide = filtro === "todas" || celda.dataset.categoriaItem === filtro;
+          celda.style.display = coincide ? "" : "none";
+          if (coincide) visibles++;
+        });
+        if (sinResultados) sinResultados.hidden = visibles > 0;
       });
-      if (empty) empty.classList.toggle('hidden', n > 0);
-      if (btnRnd && visible.length)
-        btnRnd.href = visible[Math.floor(Math.random() * visible.length)];
-    }
+    });
 
-    pills.forEach(p => p.addEventListener('click', () => {
-      pills.forEach(x => x.setAttribute('aria-pressed', 'false'));
-      p.setAttribute('aria-pressed', 'true');
-      filter(p.dataset.cat ?? 'todos');
-    }));
+    const botonAleatorio = document.getElementById("boton-aleatorio");
+    botonAleatorio?.addEventListener("click", () => {
+      if (slugs.length === 0) return;
+      const destino = slugs[Math.floor(Math.random() * slugs.length)];
+      window.location.href = destino;
+    });
   }
 
-  document.addEventListener('astro:page-load', init);
+  inicializarFiltros();
+  document.addEventListener("astro:after-swap", inicializarFiltros);
 </script>
+
+<style>
+  .cabecera-jugar {
+    padding-block: 3rem 1.5rem;
+  }
+  .cabecera-jugar-fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block: 0.3rem 1.6rem;
+  }
+  .titulo-jugar {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  }
+  .boton-aleatorio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    padding: 0.75rem 1.3rem;
+    border-radius: 999px;
+    border: 2.5px solid var(--color-tinta);
+    background: #b5502f;
+    color: var(--color-papel);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  .boton-aleatorio:hover {
+    transform: translateY(-2px) rotate(-1deg);
+  }
+
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-label);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    border: 2px solid var(--color-tinta);
+    background: transparent;
+    color: var(--color-tinta);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .chip-icono {
+    width: 1em;
+    height: 1em;
+  }
+  .chip[data-categoria] {
+    color: var(--acento-tinta, var(--color-tinta));
+  }
+  .chip.activo,
+  .chip:hover {
+    background: var(--color-tinta);
+    color: var(--color-papel);
+  }
+
+  .grid-acertijos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 2rem 1.6rem;
+    padding-block: 1rem 4rem;
+  }
+  .sin-resultados {
+    text-align: center;
+    padding-block: 3rem;
+    color: var(--color-tinta-suave);
+  }
+</style>

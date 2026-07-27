@@ -1,0 +1,47 @@
+---
+import { ClientRouter } from "astro:transitions";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  categoria?: string;
+}
+
+const {
+  title,
+  description = "Historias Negras: enigmas absurdos, oscuros y surrealistas para jugar en grupo respondiendo solo sí o no.",
+  categoria,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" data-categoria={categoria}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#1c1917" />
+    <title>{title} · Historias Negras</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={`${title} · Historias Negras`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <ClientRouter />
+  </head>
+  <body class="textura-papel">
+    <Header />
+    <slot />
+    <Footer />
+    <script>
+      document.addEventListener("astro:before-swap", (evento) => {
+        const direccion = (evento as any).direction === "back" ? "back" : "forward";
+        document.documentElement.dataset.astroTransitionScope = direccion;
+      });
+    </script>
+  </body>
+</html>

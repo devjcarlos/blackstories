@@ -1,184 +1,159 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Layout from "../layouts/Layout.astro";
+import Icono from "../components/Icono.astro";
+
+const reglas = [
+  {
+    titulo: "El Game Master lee, nunca explica",
+    texto:
+      "Se elige a alguien del grupo para llevar el móvil o la tablet. Esa persona abre un enigma y lee en voz alta únicamente el enunciado, nunca la solución. Su trabajo es guardar el secreto, no adivinarlo.",
+  },
+  {
+    titulo: "Solo preguntas cerradas",
+    texto:
+      "El resto del grupo reconstruye la historia haciendo preguntas que se respondan con sí, no, o \"eso no es relevante\". Nada de \"¿por qué murió?\" — sí vale \"¿murió por su propia mano?\".",
+  },
+  {
+    titulo: "El silencio también informa",
+    texto:
+      "Si nadie sabe qué preguntar, no pasa nada: es buena señal para cambiar de ángulo. Preguntar por el lugar, la época o quién más estaba presente suele desatascar la partida.",
+  },
+  {
+    titulo: "Nada de trampas con el orden",
+    texto:
+      "Da igual el orden en que se pregunte, ni quién lo consiga: el objetivo es llegar juntos a la explicación completa, no ser el primero en acertar una pieza suelta.",
+  },
+  {
+    titulo: "El final se cuenta entero",
+    texto:
+      "Cuando el grupo cree tenerlo, alguien narra la solución completa en voz alta, de principio a fin. El Game Master solo confirma si es correcta o señala qué falta.",
+  },
+];
 ---
 
-<BaseLayout
-  title="Cómo jugar — Historias Negras"
-  description="Aprende las reglas del juego de acertijos de sí o no."
->
-  <div class="page container">
-
-    <header class="page-head">
-      <p class="eyebrow">Las reglas</p>
-      <h1 class="page-title">Cómo jugar</h1>
-      <p class="page-sub">
-        Las reglas son simples. Las historias, no tanto.
+<Layout title="Cómo se juega" description="Las reglas de Historias Negras: cómo jugar a los enigmas de sí o no.">
+  <main transition:name="pagina-contenido">
+    <section class="container cabecera-reglas">
+      <p class="kicker">El manual</p>
+      <h1 class="titulo-reglas">Cómo se juega</h1>
+      <p class="intro-reglas">
+        Historias Negras se juega mejor con 3 a 8 personas, una pantalla y ninguna
+        prisa. No hace falta preparar nada más.
       </p>
-    </header>
+    </section>
 
-    <div class="rules">
-
-      {[
+    <section class="container lista-reglas">
+      <ol>
         {
-          n: '01',
-          title: 'El Game Master',
-          body: 'Uno del grupo ejerce de Game Master. Solo él conoce la solución al enigma. Lee el enunciado en voz alta al resto del grupo.',
-        },
-        {
-          n: '02',
-          title: 'Las preguntas',
-          body: 'El grupo hace preguntas que el Game Master solo puede responder con "sí", "no" o "no es relevante". Sin más pistas.',
-          extra: ['Sí', 'No', 'No es relevante'],
-        },
-        {
-          n: '03',
-          title: 'El cronómetro',
-          body: 'Cada acertijo tiene un tiempo estimado. El cronómetro se vuelve rojo si lo superáis. No es obligatorio, pero añade tensión.',
-        },
-        {
-          n: '04',
-          title: 'La victoria',
-          body: 'Cuando alguien adivina la historia (o algo suficientemente aproximado), el Game Master pulsa revelar y la solución completa aparece.',
-        },
-      ].map((r, i) => (
-        <div class={`rule anim d${Math.min(i+1,5)}`}>
-          <span class="rule__num">{r.n}</span>
-          <div class="rule__content">
-            <h2 class="rule__title">{r.title}</h2>
-            <p class="rule__body">{r.body}</p>
-            {r.extra && (
-              <div class="rule__chips">
-                {r.extra.map(chip => <span class="chip">{chip}</span>)}
+          reglas.map((regla, i) => (
+            <li class="regla">
+              <span class="regla-numero">{String(i + 1).padStart(2, "0")}</span>
+              <div>
+                <h2>{regla.titulo}</h2>
+                <p>{regla.texto}</p>
               </div>
-            )}
-          </div>
-        </div>
-      ))}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
 
-    </div>
-
-    <div class="cta-wrap">
-      <a href="/jugar" class="cta-btn">
-        Empezar a jugar
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-    </div>
-
-  </div>
-</BaseLayout>
+    <section class="container caja-final">
+      <Icono nombre="sello" class="caja-icono" />
+      <p>
+        Una única regla no escrita: si haces de Game Master, no mires la pantalla
+        de reojo esperando que adivinen rápido. Deja que se equivoquen. Ahí está
+        la gracia.
+      </p>
+      <a href="/jugar" class="boton-ir-jugar">Elegir el primer enigma</a>
+    </section>
+  </main>
+</Layout>
 
 <style>
-  .page { padding-top: 56px; padding-bottom: 80px; max-width: 720px; }
+  .cabecera-reglas {
+    padding-block: 3rem 2rem;
+    max-width: 46rem;
+  }
+  .titulo-reglas {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    margin-block: 0.4rem 1rem;
+  }
+  .intro-reglas {
+    font-family: var(--font-relato);
+    font-size: 1.15rem;
+    color: var(--color-tinta-suave);
+  }
 
-  .page-head { margin-bottom: 60px; }
-
-  .eyebrow {
-    font-family: var(--f-display);
+  .lista-reglas ol {
+    list-style: none;
+    max-width: 46rem;
+  }
+  .regla {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr;
+    gap: 1.2rem;
+    padding-block: 1.8rem;
+    border-bottom: 2px dashed var(--color-borde);
+  }
+  .regla:first-child {
+    border-top: 2px dashed var(--color-borde);
+  }
+  .regla-numero {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: #b5502f;
+  }
+  .regla h2 {
+    font-family: var(--font-label);
     font-weight: 700;
-    font-size: .75rem;
-    letter-spacing: .15em;
     text-transform: uppercase;
-    color: var(--blood);
-    margin-bottom: 10px;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .regla p {
+    color: var(--color-tinta-suave);
+    line-height: 1.6;
+    font-size: 0.98rem;
   }
 
-  .page-title {
-    font-family: var(--f-headline);
-    font-weight: 700;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    color: var(--ink);
-    letter-spacing: -.01em;
-    line-height: 1;
-    margin-bottom: 16px;
-    
-  }
-
-  .page-sub {
-    font-family: var(--f-serif);
-    font-style: italic;
-    font-size: 1.25rem;
-    color: var(--muted);
-  }
-
-  /* Reglas */
-  .rules {
+  .caja-final {
+    max-width: 46rem;
+    margin-block: 3rem 5rem;
+    padding: 2.2rem;
+    border: 2.5px solid var(--color-tinta);
+    border-radius: var(--radio-tarjeta);
+    background: #f2ded4;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    align-items: flex-start;
+    gap: 1rem;
   }
-
-  .rule {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 24px;
-    padding: 32px 0;
-    border-bottom: 1px solid var(--cream-border);
+  .caja-icono {
+    width: 2rem;
+    height: 2rem;
+    color: #b5502f;
   }
-  .rule:first-child { border-top: 1px solid var(--cream-border); }
-
-  .rule__num {
-    font-family: var(--f-display);
-    font-weight: 800;
-    font-size: 2rem;
-    color: var(--cream-border);
-    line-height: 1;
-    padding-top: 4px;
+  .caja-final p {
+    font-family: var(--font-relato);
+    font-size: 1.1rem;
+    line-height: 1.6;
   }
-
-  .rule__content { display: flex; flex-direction: column; gap: 10px; }
-
-  .rule__title {
-    font-family: var(--f-display);
-    font-weight: 800;
-    font-size: 1.25rem;
-    color: var(--ink);
-    letter-spacing: -.01em;
-  }
-
-  .rule__body {
-    font-size: .9375rem;
-    line-height: 1.65;
-    color: var(--muted);
-  }
-
-  .rule__chips {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 4px;
-  }
-
-  .chip {
-    font-family: var(--f-display);
+  .boton-ir-jugar {
+    font-family: var(--font-label);
     font-weight: 700;
-    font-size: .8125rem;
-    padding: 6px 14px;
-    border-radius: 99px;
-    border: 1.5px solid var(--cream-border);
-    color: var(--ink-2);
-  }
-
-  /* CTA */
-  .cta-wrap {
-    margin-top: 56px;
-  }
-
-  .cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 28px;
-    border-radius: 99px;
-    background: var(--ink);
-    color: var(--cream);
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: .9375rem;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    padding: 0.8rem 1.4rem;
+    border-radius: 999px;
+    border: 2.5px solid var(--color-tinta);
+    background: var(--color-tinta);
+    color: var(--color-papel);
     text-decoration: none;
-    transition: opacity .15s, scale .15s;
   }
-  .cta-btn:hover  { opacity: .85; }
-  .cta-btn:active { scale: .97; }
 </style>

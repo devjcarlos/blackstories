@@ -1,0 +1,85 @@
+---
+const rutaActual = new URL(Astro.request.url).pathname;
+const esActiva = (ruta: string) =>
+  ruta === "/" ? rutaActual === "/" : rutaActual.startsWith(ruta);
+---
+
+<header class="cabecera" transition:persist>
+  <div class="container cabecera-interior">
+    <a href="/" class="marca">
+      <span class="marca-titulo">Historias Negras</span>
+      <span class="marca-lema">un enigma. una noche. cero pistas.</span>
+    </a>
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="/jugar" class={esActiva("/jugar") ? "activo" : ""}>Jugar</a>
+      <a href="/como-jugar" class={esActiva("/como-jugar") ? "activo" : ""}>Cómo se juega</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--color-papel) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 2px solid var(--color-tinta);
+  }
+  .cabecera-interior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.9rem;
+    gap: 1rem;
+  }
+  .marca {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--color-tinta);
+    line-height: 1;
+  }
+  .marca-titulo {
+    font-family: var(--font-headline);
+    font-weight: 900;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+  }
+  .marca-lema {
+    font-family: var(--font-ui);
+    font-size: 0.68rem;
+    color: var(--color-tinta-suave);
+    font-style: italic;
+    margin-top: 0.15rem;
+  }
+  .nav {
+    display: flex;
+    gap: 1.6rem;
+    font-family: var(--font-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+  }
+  .nav a {
+    text-decoration: none;
+    color: var(--color-tinta);
+    position: relative;
+    padding-bottom: 0.2rem;
+  }
+  .nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background: #b5502f;
+    transition: width 0.25s ease;
+  }
+  .nav a:hover::after,
+  .nav a.activo::after {
+    width: 100%;
+  }
+</style>

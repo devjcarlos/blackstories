@@ -1,0 +1,32 @@
+---
+interface Props {
+  dificultad: number;
+  class?: string;
+}
+const { dificultad, class: className = "" } = Astro.props;
+---
+
+<span class={`dificultad ${className}`} aria-label={`Dificultad ${dificultad} de 5`}>
+  {
+    Array.from({ length: 5 }).map((_, i) => (
+      <span class="punto" data-lleno={i < dificultad ? "true" : "false"} />
+    ))
+  }
+</span>
+
+<style>
+  .dificultad {
+    display: inline-flex;
+    gap: 0.3em;
+    align-items: center;
+  }
+  .punto {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: var(--color-borde);
+  }
+  .punto[data-lleno="true"] {
+    background: var(--acento);
+  }
+</style>
